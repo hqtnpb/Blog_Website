@@ -45,9 +45,10 @@ const userSchema = new mongoose.Schema(
             password: {
                 type: String,
             },
-            admin: {
-                type: Boolean,
-                default: false,
+            role: {
+                type: String,
+                enum: ['user', 'partner', 'admin'],
+                default: 'user',
             },
             bio: {
                 type: String,
@@ -100,6 +101,16 @@ const userSchema = new mongoose.Schema(
         google_auth: {
             type: Boolean,
             default: false,
+        },
+        partner_info: {
+            hotel: {
+                type: Schema.Types.ObjectId,
+                ref: "Hotel",
+            },
+            airline: {
+                type: Schema.Types.ObjectId,
+                ref: "Airline",
+            },
         },
         blogs: {
             type: [Schema.Types.ObjectId],
