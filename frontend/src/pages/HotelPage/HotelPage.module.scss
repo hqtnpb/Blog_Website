@@ -1,0 +1,28 @@
+.hotel-page {
+    // Styles for the hotel page container
+}
+
+.hero-section {
+    // Styles for the hero section
+    // I will add a background image and center the content based on the figma design.
+    background: url('../../assets/image/destination_bg.png') no-repeat center center/cover;
+    padding: 120px 0;
+    text-align: center;
+    color: #fff;
+}
+
+.hero__title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.hero__desc {
+    font-size: 20px;
+}
+
+.search-form-container {
+    margin-top: -60px;
+    position: relative;
+    z-index: 10;
+}

@@ -19,9 +19,10 @@ let passwordRegex =
 
 const formatDataToSend = (user) => {
     const accessToken = jwt.sign(
-        { id: user._id },
+        { id: user._id, role: user.personal_info.role },
         process.env.SECRET_ACCESS_KEY
     );
+    console.log(accessToken);
     return {
         accessToken,
         profile_img: user.personal_info.profile_img,

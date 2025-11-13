@@ -5,7 +5,7 @@ const { auth } = require("firebase-admin");
 
 const createBlog = {
     createBlog: (req, res) => {
-        let authorId = req.user;
+        let authorId = req.user.id;
 
         let { title, desc, banner, tags, content, draft, id } = req.body;
 

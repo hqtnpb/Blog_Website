@@ -20,6 +20,13 @@ const bookingSchema = new mongoose.Schema(
                 return this.type === "flight";
             },
         },
+        hotel: {
+            type: Schema.Types.ObjectId,
+            ref: "Hotel",
+            required: function () {
+                return this.type === "hotel";
+            },
+        },
         room: {
             type: Schema.Types.ObjectId,
             ref: "Room",
@@ -49,7 +56,7 @@ const bookingSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["pending", "confirmed", "cancelled"],
+            enum: ["pending", "confirmed", "cancelled", "checked-in", "checked-out"],
             default: "pending",
         },
     },

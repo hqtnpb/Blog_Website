@@ -39,6 +39,12 @@ const hotelSchema = new mongoose.Schema(
                 ref: "Room", // Reference to the Room model
             },
         ],
+        rating: {
+            type: Number,
+            min: 0,
+            max: 5,
+            default: 0,
+        },
     },
     { timestamps: true }
 );

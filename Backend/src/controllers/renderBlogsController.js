@@ -165,7 +165,7 @@ const renderBlogsController = {
     },
 
     likeBlog: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
         let { _id, isLikeByUser } = req.body;
         let incrementVal = !isLikeByUser ? 1 : -1;
         Blog.findOneAndUpdate(
@@ -199,7 +199,7 @@ const renderBlogsController = {
     },
 
     likedByUser: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         let { _id } = req.body;
 
@@ -213,7 +213,7 @@ const renderBlogsController = {
     },
 
     userWrittenBlogs: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         let { page, draft, query, deletedDocCount } = req.body;
 
@@ -238,7 +238,7 @@ const renderBlogsController = {
             });
     },
     userWrittenBlogsCount: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         let { draft, query } = req.body;
 
@@ -255,7 +255,7 @@ const renderBlogsController = {
             });
     },
     deleteBlog: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
         let { blog_id } = req.body;
 
         Blog.findOneAndDelete({ blog_id })

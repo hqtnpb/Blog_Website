@@ -7,13 +7,7 @@ const partnerController = {
     createHotel: async (req, res) => {
         try {
             const { name, description, address, city, country, images } = req.body;
-            const partnerId = req.user._id; // Assuming user ID is available from verifyJWT
-
-            // Check if partner already has a hotel
-            const existingHotel = await Hotel.findOne({ partner: partnerId });
-            if (existingHotel) {
-                return res.status(400).json({ error: "Partner can only create one hotel." });
-            }
+            const partnerId = req.user.id; 
 
             const newHotel = new Hotel({
                 name,
@@ -27,8 +21,8 @@ const partnerController = {
 
             const savedHotel = await newHotel.save();
 
-            // Optionally, update the User model to reference the created Hotel
-            await User.findByIdAndUpdate(partnerId, { $set: { 'partner_info.hotel': savedHotel._id } });
+            // Add the new hotel to the partner's list of hotels
+            await User.findByIdAndUpdate(partnerId, { $push: { 'partner_info.hotel': savedHotel._id } });
 
             res.status(201).json(savedHotel);
         } catch (error) {
@@ -39,7 +33,7 @@ const partnerController = {
     getHotel: async (req, res) => {
         try {
             const { hotelId } = req.params;
-            const partnerId = req.user._id;
+            const partnerId = req.user.id;
 
             const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId }).populate("rooms");
 
@@ -56,7 +50,7 @@ const partnerController = {
     updateHotel: async (req, res) => {
         try {
             const { hotelId } = req.params;
-            const partnerId = req.user._id;
+            const partnerId = req.user.id;
             const { name, description, address, city, country, images } = req.body;
 
             const updatedHotel = await Hotel.findOneAndUpdate(
@@ -78,7 +72,7 @@ const partnerController = {
     deleteHotel: async (req, res) => {
         try {
             const { hotelId } = req.params;
-            const partnerId = req.user._id;
+            const partnerId = req.user.id;
 
             // Find the hotel to ensure it belongs to the partner
             const hotelToDelete = await Hotel.findOne({ _id: hotelId, partner: partnerId });
@@ -92,8 +86,8 @@ const partnerController = {
             // Delete the hotel
             await Hotel.deleteOne({ _id: hotelId });
 
-            // Optionally, remove the hotel reference from the User model
-            await User.findByIdAndUpdate(partnerId, { $unset: { 'partner_info.hotel': 1 } });
+            // Remove the hotel reference from the User's hotel array
+            await User.findByIdAndUpdate(partnerId, { $pull: { 'partner_info.hotel': hotelId } });
 
             res.status(200).json({ message: "Hotel and associated rooms deleted successfully." });
         } catch (error) {
@@ -103,7 +97,7 @@ const partnerController = {
 
     getPartnerHotels: async (req, res) => {
         try {
-            const partnerId = req.user._id;
+            const partnerId = req.user.id;
             const hotels = await Hotel.find({ partner: partnerId }).populate("rooms");
             res.status(200).json(hotels);
         } catch (error) {
@@ -115,8 +109,8 @@ const partnerController = {
     createRoom: async (req, res) => {
         try {
             const { hotelId } = req.params;
-            const partnerId = req.user._id;
-            const { roomNumber, type, pricePerNight, capacity, amenities, images } = req.body;
+            const partnerId = req.user.id;
+            const { roomNumber, type, pricePerNight, maxAdults, maxChildren, amenities, images } = req.body;
 
             // Verify the hotel belongs to the partner
             const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });
@@ -135,7 +129,8 @@ const partnerController = {
                 roomNumber,
                 type,
                 pricePerNight,
-                capacity,
+                maxAdults,
+                maxChildren,
                 amenities,
                 images,
             });
@@ -155,7 +150,7 @@ const partnerController = {
     getRoom: async (req, res) => {
         try {
             const { hotelId, roomId } = req.params;
-            const partnerId = req.user._id;
+            const partnerId = req.user.id;
 
             // Verify the hotel belongs to the partner
             const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });
@@ -178,8 +173,8 @@ const partnerController = {
     updateRoom: async (req, res) => {
         try {
             const { hotelId, roomId } = req.params;
-            const partnerId = req.user._id;
-            const { roomNumber, type, pricePerNight, capacity, amenities, images } = req.body;
+            const partnerId = req.user.id;
+            const { roomNumber, type, pricePerNight, maxAdults, maxChildren, amenities, images } = req.body;
 
             // Verify the hotel belongs to the partner
             const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });
@@ -189,7 +184,7 @@ const partnerController = {
 
             const updatedRoom = await Room.findOneAndUpdate(
                 { _id: roomId, hotel: hotelId },
-                { $set: { roomNumber, type, pricePerNight, capacity, amenities, images } },
+                { $set: { roomNumber, type, pricePerNight, maxAdults, maxChildren, amenities, images } },
                 { new: true }
             );
 
@@ -206,7 +201,7 @@ const partnerController = {
     deleteRoom: async (req, res) => {
         try {
             const { hotelId, roomId } = req.params;
-            const partnerId = req.user._id;
+            const partnerId = req.user.id;
 
             // Verify the hotel belongs to the partner
             const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });

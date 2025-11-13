@@ -103,10 +103,10 @@ const userSchema = new mongoose.Schema(
             default: false,
         },
         partner_info: {
-            hotel: {
+            hotel: [{
                 type: Schema.Types.ObjectId,
                 ref: "Hotel",
-            },
+            }],
             airline: {
                 type: Schema.Types.ObjectId,
                 ref: "Airline",

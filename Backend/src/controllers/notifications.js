@@ -3,7 +3,7 @@ const Notification = require("../models/Notification");
 
 const notificationsController = {
     newNotification: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         Notification.exists({
             notification_for: user_id,
@@ -29,7 +29,7 @@ const notificationsController = {
     },
 
     getNotifications: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         let { page, filter, deletedDocCount } = req.body;
 
@@ -72,7 +72,7 @@ const notificationsController = {
             });
     },
     allNotificationsCount: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         let { filter } = req.body;
 

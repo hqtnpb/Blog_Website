@@ -23,6 +23,7 @@ import BlogDetails from "~/pages/BlogDetails/BlogDetails";
 import SideNav from "~/components/SideNav/SideNav";
 import Notifications from "~/pages/Notifications/Notifications";
 import ManageBlogs from "~/pages/ManageBlogs";
+import HotelPage from "~/pages/HotelPage/HotelPage";
 // const EditProfilePlaceholder = () => <h2>Edit Profile Page (Coming Soon)</h2>;
 // const ChangePasswordPlaceholder = () => (
 //     <h2>Change Password Page (Coming Soon)</h2>
@@ -78,7 +79,7 @@ const publicRoutes = [
     { path: "/user/:id", component: ProfilePage, layout: HeaderOnly },
     { path: "/search/:query", component: SearchPage },
     { path: "/blog/:blog_id", component: BlogDetails },
-
+    {path: "/hotels", component: HotelPage, layout: HeaderOnly},
     { path: "*", component: Error, layout: null },
 ];
 

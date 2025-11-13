@@ -52,7 +52,7 @@ const deleteComments = (_id) => {
 
 const commentController = {
     addComment: async (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         let { _id, comment, blog_author, replying_to } = req.body;
 
@@ -172,7 +172,7 @@ const commentController = {
     },
 
     deleteComment: (req, res) => {
-        let user_id = req.user;
+        let user_id = req.user.id;
 
         let { _id } = req.body;
 

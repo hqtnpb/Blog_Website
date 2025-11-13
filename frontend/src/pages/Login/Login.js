@@ -68,6 +68,8 @@ function Login() {
         }
         userAuthThroughServer(serverRoute, formData);
     };
+    // console.log(accessToken);
+
     const handleGoogleAuth = (e) => {
         e.preventDefault();
         authWithGoogle()

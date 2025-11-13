@@ -20,9 +20,14 @@ const roomSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        capacity: {
+        maxAdults: {
             type: Number,
             required: true,
+        },
+        maxChildren: {
+            type: Number,
+            required: true,
+            default: 0,
         },
         amenities: [
             {

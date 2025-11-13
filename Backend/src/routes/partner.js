@@ -1,12 +1,11 @@
 const partnerController = require("../controllers/partnerController");
+const bookingController = require("../controllers/bookingController");
 const router = require("express").Router();
 const  verifyJWT  = require("../middleWare/authMiddleWare");
 
 // Middleware to check if the user is a partner
 const isPartner = (req, res, next) => {
-    // Assuming user info is available in req.user after verifyJWT
-    // And req.user.personal_info.role is the correct path to the role
-    if (req.user && req.user.personal_info && req.user.personal_info.role === 'partner') {
+    if (req.user && req.user.role === 'partner') {
         next();
     } else {
         res.status(403).json({ error: "Access denied. Not a partner." });
@@ -25,5 +24,9 @@ router.post("/hotel/:hotelId/room", verifyJWT, isPartner, partnerController.crea
 router.get("/hotel/:hotelId/room/:roomId", verifyJWT, isPartner, partnerController.getRoom);
 router.put("/hotel/:hotelId/room/:roomId", verifyJWT, isPartner, partnerController.updateRoom);
 router.delete("/hotel/:hotelId/room/:roomId", verifyJWT, isPartner, partnerController.deleteRoom);
+
+// Booking Routes for Partner
+router.get("/bookings", verifyJWT, isPartner, bookingController.getPartnerBookings);
+router.put("/bookings/:bookingId", verifyJWT, isPartner, bookingController.updateBookingStatus);
 
 module.exports = router;

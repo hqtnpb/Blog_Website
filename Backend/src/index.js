@@ -11,6 +11,10 @@ const userRoute = require("./routes/user");
 const commentRoute = require("./routes/comment");
 const notificationsRoute = require("./routes/notifications");
 const partnerRoute = require("./routes/partner");
+const hotelRoute = require("./routes/hotel");
+const bookingRoute = require("./routes/booking");
+const reviewRoute = require("./routes/review");
+const dashboardRoute = require("./routes/dashboard");
 const jwt = require("jsonwebtoken");
 const verifyJWT = require("./middleWare/authMiddleWare");
 dotenv.config();
@@ -51,6 +55,14 @@ app.use("/api/comment", commentRoute);
 app.use("/api/notifications", notificationsRoute);
 
 app.use("/api/partner", partnerRoute);
+
+app.use("/api/hotel", hotelRoute);
+
+app.use("/api/bookings", bookingRoute);
+
+app.use("/api/reviews", reviewRoute);
+
+app.use("/api/dashboard", dashboardRoute);
 
 app.listen(8000, () => {
     console.log("Server is running on port 8000");
