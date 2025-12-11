@@ -9,89 +9,82 @@ function Suggestions() {
   return (
     <section className={cx("suggestions")}>
       <div className={cx("inner")}>
-        <h1 className={cx("title")}>Submit a request</h1>
+        <h1 className={cx("title")}>Gửi yêu cầu</h1>
         <form className={cx("form")}>
-          <label className={cx("title_1")}> Your name</label>
+          <label className={cx("title_1")}> Tên của bạn</label>
           <input className={cx("input")} type="text" name="name" />
-          <label className={cx("title_1")}> Your email address</label>
+          <label className={cx("title_1")}> Địa chỉ email của bạn</label>
           <input className={cx("input")} type="email" name="name" />
-          <label className={cx("title_1")}> Your phone number</label>
+          <label className={cx("title_1")}> Số điện thoại của bạn</label>
           <input className={cx("input")} type="number" name="temp" />
-          <label className={cx("title_1")}>I'd like to...</label>
+          <label className={cx("title_1")}>Tôi muốn...</label>
 
           <select className={cx("subjectt")} name="subject">
             <option className={cx("op")} value="collaborate">
-              Give Feedback
+              Góp ý kiến
             </option>
             <option className={cx("op")} value="collaborate">
-              Give Suggestions
+              Đưa ra đề xuất
             </option>
             <option className={cx("op")} value="collaborate">
-              Give Opinion
+              Đưa ra ý kiến
             </option>
             <option className={cx("op")} value="collaborate">
-              Give Correction
+              Đưa ra chỉnh sửa
             </option>
             <option className={cx("op")} value="collaborate">
-              Give Informaiton
+              Cung cấp thông tin
             </option>
           </select>
 
           <label className={cx("title_1")}>
-            What is your feedback regarding?
+            Phản hồi của bạn về vấn đề gì?
           </label>
 
           <select className={cx("subjectt")} name="subject">
             <option className={cx("op")} value="collaborate">
-              Other Feedback
+              Phản hồi khác
             </option>
             <option className={cx("op")} value="collaborate">
-              About Spot
+              Về địa điểm
             </option>
             <option className={cx("op")} value="collaborate">
-              About Location
+              Về vị trí
             </option>
             <option className={cx("op")} value="collaborate">
-              About Correction
+              Về chỉnh sửa
             </option>
             <option className={cx("op")} value="collaborate">
-              About Informaiton
+              Về thông tin
             </option>
           </select>
 
-          <label className={cx("title_1")}>Submit your inquiry here</label>
+          <label className={cx("title_1")}>Gửi yêu cầu của bạn tại đây</label>
           <textarea className={cx("texta")} name="message"></textarea>
 
           <label className={cx("title_1")}> Ad files or drop files here</label>
           <div className={cx("upload")}>
-          <Button className={cx("file-upload")} name="upfile"></Button>
-          <img className={cx("upload-icon")} src={image.icon_upload}/>
+            <Button className={cx("file-upload")} name="upfile"></Button>
+            <img className={cx("upload-icon")} src={image.icon_upload} />
           </div>
-          <label className={cx("title_2")}> 
-            Or your can
-          </label>
+          <label className={cx("title_2")}>Or your can</label>
 
           <div className={cx("upload_input")}>
-          <Button  className={cx("gg")}>
-            Upload from Google Drive
-          </Button>
-          <img className={cx("upload")} src={image.upload_img_1}/>
+            <Button className={cx("gg")}>Upload from Google Drive</Button>
+            <img className={cx("upload")} src={image.upload_img_1} />
           </div>
           <div className={cx("upload_input")}>
-          <Button className={cx("gg")}>
-            Upload from Dropbox
-          </Button>
-          <img className={cx("upload")} src={image.upload_img_2}/>
+            <Button className={cx("gg")}>Upload from Dropbox</Button>
+            <img className={cx("upload")} src={image.upload_img_2} />
           </div>
           <div className={cx("upload_input")}>
-          <Button className={cx("gg")}>
-            Upload from Microsoft Onedrive
-          </Button>
-          <img className={cx("upload")} src={image.upload_img_3}/>
+            <Button className={cx("gg")}>Upload from Microsoft Onedrive</Button>
+            <img className={cx("upload")} src={image.upload_img_3} />
           </div>
 
-          <Button active className={cx("btn")}> 
-            Submit Your Request</Button>
+          <Button active className={cx("btn")}>
+            Submit Your Request
+          </Button>
         </form>
       </div>
     </section>

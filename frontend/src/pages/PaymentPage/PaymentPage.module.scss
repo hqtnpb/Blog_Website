@@ -1,0 +1,332 @@
+.payment-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .container {
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .payment-card,
+  .success-card,
+  .failed-card {
+    background: white;
+    border-radius: 24px;
+    padding: 48px 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+
+  .pending-icon,
+  .success-icon,
+  .failed-icon {
+    font-size: 72px;
+    margin-bottom: 24px;
+  }
+
+  .pending-icon {
+    color: #ff5b26;
+  }
+
+  .success-icon {
+    color: #28a745;
+    animation: scaleIn 0.5s ease;
+  }
+
+  .failed-icon {
+    color: #dc3545;
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2226;
+    margin: 0 0 16px 0;
+  }
+
+  .info-message,
+  .success-message,
+  .failed-message {
+    font-size: 16px;
+    color: #656f81;
+    margin-bottom: 32px;
+  }
+
+  .booking-summary,
+  .booking-details {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 32px 0;
+    text-align: left;
+
+    h2,
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2226;
+      margin: 0 0 16px 0;
+      text-align: center;
+    }
+
+    .summary-row,
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e9ecef;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      span {
+        color: #656f81;
+        font-size: 14px;
+      }
+
+      strong {
+        color: #1f2226;
+        font-size: 14px;
+      }
+
+      &.total {
+        margin-top: 8px;
+        padding-top: 16px;
+        border-top: 2px solid #dddfe3;
+
+        span,
+        strong {
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        strong {
+          color: #ff5b26;
+        }
+      }
+    }
+
+    p {
+      margin: 8px 0;
+      color: #656f81;
+      text-align: center;
+
+      strong {
+        color: #1f2226;
+      }
+    }
+  }
+
+  .payment-methods {
+    margin: 32px 0;
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2226;
+      margin: 0 0 16px 0;
+    }
+
+    .payment-option {
+      margin-bottom: 16px;
+
+      .momo-btn {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #a50064 0%, #d71a63 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(165, 0, 100, 0.4);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .vnpay-btn {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #0088cc 0%, #00aaff 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .security-note {
+    margin-top: 24px;
+
+    p {
+      font-size: 14px;
+      color: #656f81;
+      margin: 0;
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 32px;
+
+    button {
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    .download-btn,
+    .bookings-btn {
+      background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+      color: white;
+
+      &:hover {
+        box-shadow: 0 4px 12px rgba(255, 91, 38, 0.3);
+      }
+    }
+
+    .home-btn {
+      background: transparent;
+      color: #656f81;
+      border: 1px solid #dddfe3;
+
+      &:hover {
+        background: #f8f9fa;
+      }
+    }
+
+    .retry-btn {
+      background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+      color: white;
+
+      &:hover:not(:disabled) {
+        box-shadow: 0 4px 12px rgba(255, 91, 38, 0.3);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .cancel-btn {
+      background: #f8f9fa;
+      color: #656f81;
+
+      &:hover {
+        background: #e9ecef;
+      }
+    }
+  }
+
+  .loading,
+  .error {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: white;
+
+    p {
+      font-size: 18px;
+    }
+
+    h2 {
+      color: white;
+      margin: 16px 0;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover {
+        background: #f8f9fa;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-page {
+    .payment-card,
+    .success-card,
+    .failed-card {
+      padding: 32px 24px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+}

@@ -1,0 +1,455 @@
+import { useState, useEffect } from "react";
+import classNames from "classnames/bind";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFileExport,
+  faSpinner,
+  faCalendar,
+  faFilter,
+  faDownload,
+  faChartLine,
+  faFileInvoice,
+  faHotel,
+  faCheckCircle,
+  faDollarSign,
+  faChartBar,
+  faPercentage,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
+import toast from "react-hot-toast";
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  getPartnerHotels,
+  getDashboardStats,
+  getRevenueAnalytics,
+  getOccupancyRate,
+  exportRevenueReport,
+  exportBookingsReport,
+  exportReviewsReport,
+  exportOccupancyReport,
+} from "~/common/partnerApi";
+import styles from "./AdminReports.module.scss";
+
+const cx = classNames.bind(styles);
+
+function AdminReports() {
+  const [hotels, setHotels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(null);
+
+  // Stats State
+  const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  // Charts State
+  const [revenueData, setRevenueData] = useState([]);
+  const [occupancyData, setOccupancyData] = useState([]);
+  const [chartsLoading, setChartsLoading] = useState(true);
+
+  const [filters, setFilters] = useState({
+    reportType: "revenue",
+    hotelId: "all",
+    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
+    format: "csv",
+    period: "daily",
+  });
+
+  useEffect(() => {
+    fetchHotels();
+    fetchDashboardStats();
+    fetchChartsData();
+  }, []);
+
+  useEffect(() => {
+    fetchChartsData();
+  }, [filters.hotelId, filters.startDate, filters.endDate, filters.period]);
+
+  const fetchHotels = async () => {
+    try {
+      setLoading(true);
+      const data = await getPartnerHotels();
+      setHotels(data);
+    } catch (error) {
+      toast.error("Không thể tải danh sách khách sạn");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDashboardStats = async () => {
+    try {
+      setStatsLoading(true);
+      const data = await getDashboardStats();
+      setStats(data);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      toast.error("Không thể tải thống kê tổng quan");
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  const fetchChartsData = async () => {
+    try {
+      setChartsLoading(true);
+      const [revenueRes, occupancyRes] = await Promise.all([
+        getRevenueAnalytics({
+          hotelId: filters.hotelId,
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          period: filters.period,
+        }),
+        getOccupancyRate({
+          hotelId: filters.hotelId,
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+        }),
+      ]);
+      setRevenueData(revenueRes);
+      setOccupancyData(occupancyRes);
+    } catch (error) {
+      console.error("Error fetching charts data:", error);
+      toast.error("Không thể tải dữ liệu biểu đồ");
+    } finally {
+      setChartsLoading(false);
+    }
+  };
+
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleGenerateReport = async () => {
+    // Validate dates
+    if (!filters.startDate || !filters.endDate) {
+      toast.error("Vui lòng chọn khoảng thời gian");
+      return;
+    }
+
+    const startDate = new Date(filters.startDate);
+    const endDate = new Date(filters.endDate);
+
+    if (startDate > endDate) {
+      toast.error("Ngày bắt đầu phải trước ngày kết thúc");
+      return;
+    }
+
+    try {
+      setGenerating(filters.reportType);
+      let reportData;
+
+      // Call appropriate export function based on report type
+      switch (filters.reportType) {
+        case "revenue":
+          reportData = await exportRevenueReport({
+            hotelId: filters.hotelId,
+            startDate: filters.startDate,
+            endDate: filters.endDate,
+          });
+          break;
+        case "bookings":
+          reportData = await exportBookingsReport({
+            hotelId: filters.hotelId,
+            startDate: filters.startDate,
+            endDate: filters.endDate,
+          });
+          break;
+        case "reviews":
+          reportData = await exportReviewsReport({
+            hotelId: filters.hotelId,
+            startDate: filters.startDate,
+            endDate: filters.endDate,
+          });
+          break;
+        case "occupancy":
+          reportData = await exportOccupancyReport({
+            hotelId: filters.hotelId,
+            startDate: filters.startDate,
+            endDate: filters.endDate,
+          });
+          break;
+        default:
+          throw new Error("Loại báo cáo không hợp lệ");
+      }
+
+      // Convert to CSV or Excel based on format
+      if (filters.format === "csv") {
+        downloadCSV(reportData.data, getReportFileName());
+      } else {
+        downloadExcel(reportData.data, getReportFileName());
+      }
+
+      toast.success("Xuất báo cáo thành công!");
+    } catch (error) {
+      toast.error(error.message || "Không thể xuất báo cáo");
+    } finally {
+      setGenerating(null);
+    }
+  };
+
+  const downloadCSV = (data, filename) => {
+    if (!data || data.length === 0) {
+      toast.error("Không có dữ liệu để xuất");
+      return;
+    }
+
+    const headers = Object.keys(data[0]);
+
+    // Proper CSV escaping for values containing quotes, commas, or newlines
+    const escapeCSV = (value) => {
+      if (value == null) return "";
+      const str = String(value);
+      if (str.includes(",") || str.includes('"') || str.includes("\\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const csv = [
+      headers.join(","),
+      ...data.map((row) =>
+        headers.map((header) => escapeCSV(row[header])).join(",")
+      ),
+    ].join("\\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${filename}.csv`;
+    link.click();
+  };
+
+  const downloadExcel = (data, filename) => {
+    // For Excel, we'll use CSV format with .xlsx extension
+    // In production, you'd use a library like xlsx or exceljs
+    downloadCSV(data, filename);
+    toast.info("Excel export coming soon - Downloaded as CSV");
+  };
+
+  const getReportFileName = () => {
+    const hotel =
+      filters.hotelId === "all"
+        ? "all-hotels"
+        : hotels.find((h) => h._id === filters.hotelId)?.name || "hotel";
+
+    // Sanitize hotel name for filename
+    const sanitizedHotel = hotel
+      .replace(/[^a-zA-Z0-9-_]/g, "-")
+      .replace(/-+/g, "-")
+      .toLowerCase();
+
+    const type = filters.reportType;
+    const date = new Date().toISOString().split("T")[0];
+    return `${type}-report-${sanitizedHotel}-${date}`;
+  };
+
+  const reportTypes = [
+    {
+      id: "revenue",
+      name: "Báo Cáo Doanh Thu",
+      icon: faChartLine,
+      description: "Tổng hợp doanh thu theo thời gian",
+      color: "#10b981",
+    },
+    {
+      id: "bookings",
+      name: "Báo Cáo Đặt Phòng",
+      icon: faFileInvoice,
+      description: "Chi tiết các đơn đặt phòng",
+      color: "#3b82f6",
+    },
+    {
+      id: "reviews",
+      name: "Báo Cáo Đánh Giá",
+      icon: faHotel,
+      description: "Tổng hợp đánh giá khách hàng",
+      color: "#f59e0b",
+    },
+    {
+      id: "occupancy",
+      name: "Báo Cáo Công Suất",
+      icon: faCheckCircle,
+      description: "Tỷ lệ lấp đầy phòng",
+      color: "#8b5cf6",
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className={cx("loading-container")}>
+        <FontAwesomeIcon icon={faSpinner} spin className={cx("loading-icon")} />
+        <p>Đang tải...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={cx("reports-container")}>
+      {/* Header */}
+      <div className={cx("header")}>
+        <div className={cx("header-left")}>
+          <FontAwesomeIcon icon={faFileExport} className={cx("header-icon")} />
+          <div>
+            <h1 className={cx("title")}>Báo Cáo & Xuất Dữ Liệu</h1>
+            <p className={cx("subtitle")}>
+              Tạo và xuất báo cáo chi tiết cho khách sạn của bạn
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Report Types Grid */}
+      <div className={cx("report-types-grid")}>
+        {reportTypes.map((type) => (
+          <div
+            key={type.id}
+            className={cx("report-type-card", {
+              active: filters.reportType === type.id,
+            })}
+            onClick={() => handleFilterChange("reportType", type.id)}
+          >
+            <div
+              className={cx("report-icon")}
+              style={{ backgroundColor: type.color }}
+            >
+              <FontAwesomeIcon icon={type.icon} />
+            </div>
+            <h3 className={cx("report-name")}>{type.name}</h3>
+            <p className={cx("report-description")}>{type.description}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Filters Section */}
+      <div className={cx("filters-section")}>
+        <h2 className={cx("section-title")}>
+          <FontAwesomeIcon icon={faFilter} />
+          Tùy Chọn Báo Cáo
+        </h2>
+
+        <div className={cx("filters-grid")}>
+          {/* Hotel Selection */}
+          <div className={cx("filter-group")}>
+            <label className={cx("filter-label")}>
+              <FontAwesomeIcon icon={faHotel} />
+              Khách Sạn
+            </label>
+            <select
+              value={filters.hotelId}
+              onChange={(e) => handleFilterChange("hotelId", e.target.value)}
+              className={cx("filter-select")}
+            >
+              <option value="all">Tất cả khách sạn</option>
+              {hotels.map((hotel) => (
+                <option key={hotel._id} value={hotel._id}>
+                  {hotel.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Date Range */}
+          <div className={cx("filter-group")}>
+            <label className={cx("filter-label")}>
+              <FontAwesomeIcon icon={faCalendar} />
+              Ngày Bắt Đầu
+            </label>
+            <input
+              type="date"
+              value={filters.startDate}
+              onChange={(e) => handleFilterChange("startDate", e.target.value)}
+              className={cx("filter-input")}
+              max={filters.endDate || undefined}
+            />
+          </div>
+
+          <div className={cx("filter-group")}>
+            <label className={cx("filter-label")}>
+              <FontAwesomeIcon icon={faCalendar} />
+              Ngày Kết Thúc
+            </label>
+            <input
+              type="date"
+              value={filters.endDate}
+              onChange={(e) => handleFilterChange("endDate", e.target.value)}
+              className={cx("filter-input")}
+              min={filters.startDate || undefined}
+            />
+          </div>
+
+          {/* Format Selection */}
+          <div className={cx("filter-group")}>
+            <label className={cx("filter-label")}>
+              <FontAwesomeIcon icon={faFileExport} />
+              Định Dạng
+            </label>
+            <select
+              value={filters.format}
+              onChange={(e) => handleFilterChange("format", e.target.value)}
+              className={cx("filter-select")}
+            >
+              <option value="csv">CSV</option>
+              <option value="excel">Excel (XLSX)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Generate Button */}
+        <div className={cx("action-section")}>
+          <button
+            className={cx("generate-btn")}
+            onClick={handleGenerateReport}
+            disabled={generating !== null}
+          >
+            {generating ? (
+              <>
+                <FontAwesomeIcon icon={faSpinner} spin />
+                <span>Đang tạo báo cáo...</span>
+              </>
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faDownload} />
+                <span>Xuất Báo Cáo</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Stats Preview */}
+      <div className={cx("stats-preview")}>
+        <h2 className={cx("section-title")}>Thông Tin Khách Sạn</h2>
+        <div className={cx("stats-grid")}>
+          <div className={cx("stat-card")}>
+            <FontAwesomeIcon icon={faHotel} className={cx("stat-icon")} />
+            <div className={cx("stat-info")}>
+              <p className={cx("stat-label")}>Tổng Khách Sạn</p>
+              <p className={cx("stat-value")}>{hotels.length}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AdminReports;

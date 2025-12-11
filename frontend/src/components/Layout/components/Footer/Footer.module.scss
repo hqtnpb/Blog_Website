@@ -1,110 +1,352 @@
 @use "./src/styles/abstracts" as abstracts;
 
 .footer {
-    margin-top: 150px;
-    background-color: #fff9e5;
+  margin-top: 150px;
+  background-color: #fff9e5;
+
+  // Tablet
+  @include abstracts.screen(lg) {
+    margin-top: 100px;
+  }
+
+  // Mobile
+  @include abstracts.screen(sm) {
+    margin-top: 60px;
+  }
 }
 
 .inner {
-    padding: 100px 0;
-    display: flex;
-    gap: 100px;
-    @include abstracts.screen(sm) {
-        flex-wrap: wrap;
-        padding-top: 30px;
-        gap: 30px;
-    }
+  padding: 100px 0;
+  display: flex;
+  gap: 100px;
+
+  // Tablet: reduce gap and padding
+  @include abstracts.screen(lg) {
+    padding: 80px 24px;
+    gap: 60px;
+  }
+
+  // Mobile: stack vertically
+  @include abstracts.screen(sm) {
+    flex-direction: column;
+    padding: 50px 16px;
+    gap: 40px;
+  }
 }
+
+.footer-left {
+  flex: 1;
+
+  // Mobile: full width
+  @include abstracts.screen(sm) {
+    width: 100%;
+  }
+}
+
 .column-list {
-    display: flex;
-    gap: 100px;
-    @include abstracts.screen(sm) {
-        flex-wrap: wrap;
-        gap: 30px;
+  display: flex;
+  gap: 100px;
+  flex-wrap: wrap;
+
+  // Tablet: reduce gap
+  @include abstracts.screen(lg) {
+    gap: 50px;
+  }
+
+  // Mobile: smaller gap, 2 columns
+  @include abstracts.screen(md) {
+    gap: 40px;
+  }
+
+  @include abstracts.screen(sm) {
+    gap: 30px;
+
+    .column-item {
+      flex: 0 0 calc(50% - 15px);
+      min-width: 140px;
     }
+  }
 }
 .column-item {
-    .title {
-        margin-bottom: 24px;
-        color: #191b1d;
-        font-size: 2.2rem;
-        font-weight: 700;
-        line-height: 1.28;
+  .title {
+    margin-bottom: 24px;
+    color: #191b1d;
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.28;
+
+    // Tablet
+    @include abstracts.screen(lg) {
+      font-size: 2rem;
+      margin-bottom: 20px;
     }
-    .footer-list {
-        display: flex;
-        flex-direction: column;
-        list-style: none;
-        gap: 16px;
-        .footer-item {
-            color: #4e5358;
-            font-size: 1.6rem;
-            font-weight: 400;
-            line-height: 1.75;
-        }
+
+    // Mobile
+    @include abstracts.screen(sm) {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
     }
+  }
+
+  .footer-list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    gap: 16px;
+
+    // Tablet
+    @include abstracts.screen(lg) {
+      gap: 14px;
+    }
+
+    // Mobile
+    @include abstracts.screen(sm) {
+      gap: 12px;
+    }
+
+    .footer-item {
+      color: #4e5358;
+      font-size: 1.6rem;
+      font-weight: 400;
+      line-height: 1.75;
+      cursor: pointer;
+      transition: color 0.2s, transform 0.2s;
+
+      // Tablet
+      @include abstracts.screen(lg) {
+        font-size: 1.5rem;
+      }
+
+      // Mobile
+      @include abstracts.screen(sm) {
+        font-size: 1.4rem;
+      }
+
+      &:hover {
+        color: #ff5b26;
+        transform: translateX(4px);
+      }
+    }
+  }
 }
 
 .footer-right {
-    .title {
-        color: #191b1d;
-        font-size: 2.2rem;
-        font-weight: 700;
-        line-height: 1.28;
+  flex-shrink: 0;
+  min-width: 300px;
+
+  // Tablet
+  @include abstracts.screen(lg) {
+    min-width: 280px;
+  }
+
+  // Mobile
+  @include abstracts.screen(sm) {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .title {
+    color: #191b1d;
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.28;
+
+    // Tablet
+    @include abstracts.screen(lg) {
+      font-size: 2rem;
     }
-    .subscribe {
-        margin-top: 24px;
+
+    // Mobile
+    @include abstracts.screen(sm) {
+      font-size: 1.8rem;
+    }
+  }
+
+  .subscribe {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+
+    // Tablet
+    @include abstracts.screen(lg) {
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    // Mobile: stack vertically
+    @include abstracts.screen(sm) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .input-email {
+      width: 258px;
+      padding: 16px 20px;
+      border-radius: 30px;
+      border: 1px solid #4e5358;
+      background-color: transparent;
+      font-size: 1.6rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      // Tablet
+      @include abstracts.screen(lg) {
+        width: 100%;
+        padding: 14px 18px;
+        font-size: 1.5rem;
+      }
+
+      // Mobile
+      @include abstracts.screen(sm) {
+        width: 100%;
+        padding: 14px 18px;
+        font-size: 1.5rem;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #ff5b26;
+        box-shadow: 0 0 0 3px rgba(255, 91, 38, 0.1);
+      }
+
+      &::placeholder {
+        color: #4e5358;
+        font-size: 1.6rem;
+        font-weight: 400;
+        line-height: 1.75;
+        opacity: 0.5;
+
+        @include abstracts.screen(lg) {
+          font-size: 1.5rem;
+        }
+
         @include abstracts.screen(sm) {
-            display: flex;
+          font-size: 1.4rem;
         }
-        .input-email {
-            width: 258px;
-            padding: 16px;
-            border-radius: 30px;
-            border: 1px solid #4e5358;
-            background-color: transparent;
-            @include abstracts.screen(sm) {
-                width: 100%;
-            }
-            &::placeholder {
-                color: #4e5358;
-                font-size: 1.6rem;
-                font-weight: 400;
-                line-height: 1.75;
-                opacity: 0.5;
-            }
-        }
-        .btn {
-            width: 157px;
-            margin-left: 16px;
-            padding: 15px 35px;
-            border-radius: 60px;
-            background: #ff5b26;
-        }
+      }
     }
-    .social {
-        .title {
-            margin-top: 35px;
-            color: #191b1d;
-            font-size: 22px;
-            font-weight: 700;
-            line-height: 1.27;
-        }
-        .social-list {
-            margin-top: 24px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 16px;
-            .social-item {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 36px;
-                height: 36px;
-                background-color: black;
-                border-radius: 50%;
-            }
-        }
+
+    .btn {
+      width: 157px;
+      margin-left: 16px;
+      padding: 15px 35px;
+      border-radius: 60px;
+      background: #ff5b26;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        background: #e54e1a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 91, 38, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      // Tablet
+      @include abstracts.screen(lg) {
+        width: 100%;
+        margin-left: 0;
+        padding: 14px 30px;
+      }
+
+      // Mobile
+      @include abstracts.screen(sm) {
+        width: 100%;
+        margin-left: 0;
+        padding: 14px 30px;
+      }
     }
+  }
+  .social {
+    .title {
+      margin-top: 35px;
+      color: #191b1d;
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.27;
+
+      // Tablet
+      @include abstracts.screen(lg) {
+        margin-top: 30px;
+        font-size: 2rem;
+      }
+
+      // Mobile
+      @include abstracts.screen(sm) {
+        margin-top: 28px;
+        font-size: 1.8rem;
+      }
+    }
+
+    .social-list {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+
+      // Tablet
+      @include abstracts.screen(lg) {
+        margin-top: 20px;
+        gap: 14px;
+      }
+
+      // Mobile
+      @include abstracts.screen(sm) {
+        margin-top: 18px;
+        gap: 12px;
+      }
+
+      .social-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        background-color: #191b1d;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        // Tablet
+        @include abstracts.screen(lg) {
+          width: 38px;
+          height: 38px;
+        }
+
+        // Mobile
+        @include abstracts.screen(sm) {
+          width: 36px;
+          height: 36px;
+        }
+
+        img {
+          width: 18px;
+          height: 18px;
+          object-fit: contain;
+          filter: brightness(0) invert(1);
+
+          @include abstracts.screen(sm) {
+            width: 16px;
+            height: 16px;
+          }
+        }
+
+        &:hover {
+          background-color: #ff5b26;
+          transform: translateY(-3px);
+          box-shadow: 0 4px 12px rgba(255, 91, 38, 0.4);
+        }
+
+        &:active {
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
 }

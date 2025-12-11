@@ -1,0 +1,393 @@
+.reserve-card {
+  background-color: #fff;
+  position: relative;
+  border-radius: 24px;
+  box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  padding: 24px;
+}
+
+.prices-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.prices-title-row {
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  margin-top: 32px;
+}
+
+.prices-title {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  line-height: 26px;
+  position: relative;
+  flex-shrink: 0;
+  color: #1f2226;
+  font-size: 20px;
+}
+
+.prices-range-row {
+  display: flex;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  gap: 4px;
+  align-items: flex-start;
+  line-height: 24px;
+  position: relative;
+  flex-shrink: 0;
+  color: #2b3037;
+  font-size: 16px;
+  width: 100%;
+}
+
+.price-text {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.show-rooms-button {
+  background-color: #ff5b26;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 12px;
+  width: 100%;
+  border: none;
+  margin-top: 32px;
+}
+
+.show-rooms-button-text {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  line-height: normal;
+  font-style: normal;
+  position: relative;
+  flex-shrink: 0;
+  font-size: 18px;
+  color: white;
+}
+
+.booking-form {
+  border: 1px solid #dddfe3;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 24px;
+  width: 100%;
+}
+
+.date-picker-row {
+  display: flex;
+  height: 76px;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  cursor: pointer;
+}
+
+.check-in-section {
+  background-color: white;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: 10px;
+  height: 76px;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 1px;
+  min-width: 1px;
+  overflow: hidden;
+  padding: 16px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.check-in-content {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.calendar-icon-container {
+  position: relative;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.check-in-label {
+  flex: 1 0 0;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  line-height: 24px;
+  min-height: 1px;
+  min-width: 1px;
+  position: relative;
+  flex-shrink: 0;
+  color: #2b3037;
+  font-size: 16px;
+  white-space: pre-wrap;
+}
+
+.check-in-date {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  line-height: 24px;
+  position: relative;
+  flex-shrink: 0;
+  color: #383e48;
+  font-size: 16px;
+  width: 100%;
+  white-space: pre-wrap;
+}
+
+.date-divider-container {
+  display: flex;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 0;
+}
+
+.date-divider-inner {
+  flex: none;
+  transform: rotate(90deg);
+}
+
+.date-divider-image-container {
+  height: 0;
+  position: relative;
+  width: 58px;
+}
+
+.date-divider-image-inner {
+  position: absolute;
+  inset: -0.5px -0.86%;
+}
+
+.date-divider-image {
+  display: block;
+  max-width: none;
+  width: 100%;
+  height: 100%;
+}
+
+.check-out-section {
+  background-color: white;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: 10px;
+  height: 76px;
+  align-items: center;
+  justify-content: center;
+  min-height: 1px;
+  min-width: 1px;
+  overflow: hidden;
+  padding: 16px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.check-out-content {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.check-out-label {
+  flex: 1 0 0;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  line-height: 24px;
+  min-height: 1px;
+  min-width: 1px;
+  position: relative;
+  flex-shrink: 0;
+  color: #2b3037;
+  font-size: 16px;
+  white-space: pre-wrap;
+}
+
+.check-out-date {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  line-height: 24px;
+  position: relative;
+  flex-shrink: 0;
+  color: #383e48;
+  font-size: 16px;
+  width: 100%;
+  white-space: pre-wrap;
+}
+
+.guest-divider-container {
+  height: 0;
+  position: relative;
+  flex-shrink: 0;
+  width: 281px;
+}
+
+.guest-divider-inner {
+  position: absolute;
+  inset: -0.5px -0.18%;
+}
+
+.guest-divider-image {
+  display: block;
+  max-width: none;
+  width: 100%;
+  height: 100%;
+}
+
+.guest-dropdown-button {
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.guest-dropdown-inner {
+  background-color: white;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 72px;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px 16px;
+  position: relative;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.guest-label {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  height: 27px;
+  line-height: 27px;
+  position: relative;
+  flex-shrink: 0;
+  color: #2b3037;
+  font-size: 18px;
+  width: 269px;
+  white-space: pre-wrap;
+}
+
+.guest-selection-row {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 0 0;
+  gap: 8px;
+  align-items: center;
+  min-height: 1px;
+  min-width: 1px;
+  padding: 4px 0px;
+  position: relative;
+  flex-shrink: 0;
+  width: 285px;
+}
+
+.guest-selection-content {
+  display: flex;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  gap: 2px;
+  align-items: center;
+  line-height: 24px;
+  position: relative;
+  flex-shrink: 0;
+  color: #383e48;
+  font-size: 16px;
+}
+
+.calendar-vector {
+  position: absolute;
+  inset: 9.38%;
+}
+
+.calendar-icon {
+  display: block;
+  max-width: none;
+  width: 100%;
+  height: 100%;
+}
+
+.date-range-picker {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.guest-picker {
+  position: absolute;
+  top: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  background: white;
+  box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 10;
+}
+
+.guest-picker-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.guest-picker-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #dddfe3;
+    background: white;
+    cursor: pointer;
+  }
+}

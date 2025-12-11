@@ -1,0 +1,674 @@
+// Modern Admin Dashboard Styles
+
+.dashboard {
+  padding: 0;
+  min-height: 100vh;
+}
+
+// Header
+.dashboardHeader {
+  margin-bottom: 3rem;
+
+  .title {
+    font-size: 3.2rem;
+    font-weight: 700;
+    font-family: "Syne", sans-serif;
+    color: #191b1d;
+    margin: 0 0 0.8rem;
+  }
+
+  .subtitle {
+    font-size: 1.6rem;
+    color: #6c757d;
+    margin: 0;
+  }
+}
+
+// Loading & Error States
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 2rem;
+
+  p {
+    font-size: 1.8rem;
+    color: #6c757d;
+  }
+}
+
+.loadingIcon {
+  font-size: 4.8rem;
+  color: #ff5b26;
+}
+
+.errorMessage {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.retryBtn {
+  padding: 1.2rem 3rem;
+  background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 91, 38, 0.4);
+  }
+}
+
+// Stats Grid
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr));
+  gap: 2.4rem;
+  margin-bottom: 3rem;
+}
+
+.statCard {
+  background: white;
+  border-radius: 1.6rem;
+  padding: 2.4rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.statIcon {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.statContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.statLabel {
+  font-size: 1.4rem;
+  color: #6c757d;
+  margin: 0 0 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 2.8rem;
+  font-weight: 700;
+  font-family: "Syne", sans-serif;
+  color: #191b1d;
+  margin: 0 0 1rem;
+  word-break: break-all;
+}
+
+.statTrend {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.3rem;
+  color: #6c757d;
+
+  .trendUp {
+    color: #28a745;
+  }
+
+  .trendDown {
+    color: #dc3545;
+  }
+}
+
+// Charts Row
+.chartsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(45rem, 1fr));
+  gap: 2.4rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chartsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.chartCard {
+  background: white;
+  border-radius: 1.6rem;
+  padding: 2.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.4rem;
+}
+
+.chartTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #191b1d;
+  margin: 0;
+  font-family: "Syne", sans-serif;
+}
+
+.chartIcon {
+  font-size: 2rem;
+  color: #ff5b26;
+}
+
+.chartContent {
+  min-height: 30rem;
+}
+
+// Period Selector
+.periodSelector {
+  display: flex;
+  gap: 0.8rem;
+  background: #f8f9fa;
+  padding: 0.4rem;
+  border-radius: 0.8rem;
+}
+
+.periodBtn {
+  padding: 0.8rem 1.6rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #ff5b26;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+    color: white;
+  }
+}
+
+// Occupancy Display
+.occupancyDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.4rem;
+  padding: 2rem 0;
+}
+
+.occupancyCircle {
+  position: relative;
+  width: 20rem;
+  height: 20rem;
+}
+
+.progressRing {
+  width: 100%;
+  height: 100%;
+  transform: rotate(0deg);
+}
+
+.occupancyValue {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.occupancyNumber {
+  display: block;
+  font-size: 4rem;
+  font-weight: 700;
+  font-family: "Syne", sans-serif;
+  background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.occupancyLabel {
+  display: block;
+  font-size: 1.4rem;
+  color: #6c757d;
+  margin-top: 0.4rem;
+}
+
+.occupancyStats {
+  display: flex;
+  gap: 3rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.occupancyStat {
+  text-align: center;
+}
+
+.occupancyStatLabel {
+  display: block;
+  font-size: 1.3rem;
+  color: #6c757d;
+  margin-bottom: 0.4rem;
+}
+
+.occupancyStatValue {
+  display: block;
+  font-size: 2.4rem;
+  font-weight: 700;
+  font-family: "Syne", sans-serif;
+  color: #191b1d;
+}
+
+// Top Rooms List
+.topRoomsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.topRoomItem {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 1.6rem;
+  background: #f8f9fa;
+  border-radius: 1.2rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #fff9e5;
+    transform: translateX(4px);
+  }
+}
+
+.topRoomRank {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: "Syne", sans-serif;
+  color: white;
+  flex-shrink: 0;
+}
+
+.topRoomInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.topRoomName {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #191b1d;
+  margin: 0 0 0.4rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topRoomHotel {
+  font-size: 1.3rem;
+  color: #6c757d;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topRoomStats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.topRoomRevenue {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ff5b26;
+}
+
+.topRoomBookings {
+  font-size: 1.3rem;
+  color: #6c757d;
+}
+
+// Bar Chart
+.barChart {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.barItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.barInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.barLabel {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #191b1d;
+}
+
+.barValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ff5b26;
+}
+
+.barTrack {
+  height: 1.2rem;
+  background: #e9ecef;
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 0.6rem;
+  transition: width 1s ease;
+}
+
+// Bookings List
+.bookingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.bookingItem {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 1.6rem;
+  background: #f8f9fa;
+  border-radius: 1.2rem;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #e9ecef;
+  }
+}
+
+.bookingIcon {
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.bookingInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.bookingHotel {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #191b1d;
+  margin: 0 0 0.4rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bookingDetails {
+  font-size: 1.3rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.bookingPrice {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #28a745;
+  flex-shrink: 0;
+}
+
+// Hotels Section
+.hotelsSection {
+  margin-bottom: 3rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.4rem;
+}
+
+.sectionTitle {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #191b1d;
+  margin: 0;
+}
+
+.viewAllBtn {
+  padding: 1rem 2.4rem;
+  background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+  color: white;
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  }
+}
+
+.hotelsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(28rem, 1fr));
+  gap: 2.4rem;
+}
+
+.hotelCard {
+  background: white;
+  border-radius: 1.6rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.hotelImageWrapper {
+  width: 100%;
+  height: 18rem;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+  position: relative;
+}
+
+.hotelImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.hotelIconWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hotelIcon {
+  font-size: 6rem;
+  color: white;
+  opacity: 0.5;
+}
+
+.hotelCardContent {
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hotelName {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #191b1d;
+  margin: 0 0 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hotelDescription {
+  font-size: 1.4rem;
+  color: #6c757d;
+  line-height: 2rem;
+  margin: 0 0 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hotelRevenue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ff5b26;
+  margin: 0 0 1.2rem;
+}
+
+.hotelStats {
+  display: flex;
+  gap: 1.6rem;
+  padding-top: 1.2rem;
+  margin-top: auto;
+  border-top: 1px solid #e9ecef;
+}
+
+.hotelStat {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.3rem;
+  color: #6c757d;
+
+  svg {
+    color: #ff5b26;
+  }
+}
+
+// Empty State
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20rem;
+  color: #6c757d;
+  font-size: 1.6rem;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1.6rem;
+  }
+
+  .dashboardHeader {
+    margin-bottom: 2rem;
+
+    .title {
+      font-size: 2.4rem;
+    }
+
+    .subtitle {
+      font-size: 1.4rem;
+    }
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+
+  .statValue {
+    font-size: 2.2rem;
+  }
+
+  .chartsRow {
+    gap: 1.6rem;
+  }
+
+  .hotelsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+}
