@@ -6,29 +6,29 @@ import Button from "~/components/Button";
 
 const cx = classNames.bind(style);
 function Commingsoon() {
-    return (
-        <div className={cx("commingsoon")}>
-            <div className={cx("container")}>
-                <div className={cx("inner")}>
-                    <div className={cx("content")}>
-                        <h1 className={cx("title")}>Comming Soon</h1>
+  return (
+    <div className={cx("commingsoon")}>
+      <div className={cx("container")}>
+        <div className={cx("inner")}>
+          <div className={cx("content")}>
+            <h1 className={cx("title")}>Comming Soon</h1>
 
-                        <p className={cx("script")}>
-                            Are you Ready to get something new from us. Then
-                            subscribe the news latter to get latest updates?
-                        </p>
-                        <div className={cx("action")}>
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className={cx("input")}
-                            />
+            <p className={cx("script")}>
+              Bạn đã sẵn sàng nhận những điều mới từ chúng tôi? Đăng ký nhận tin
+              để cập nhật thông tin mới nhất!
+            </p>
+            <div className={cx("action")}>
+              <input
+                type="email"
+                placeholder="Nhập email của bạn"
+                className={cx("input")}
+              />
 
-                            <Button active className={cx("btn")}>
-                                Subscribe
-                            </Button>
-                        </div>
-                        {/* <img
+              <Button active className={cx("btn")}>
+                Đăng ký
+              </Button>
+            </div>
+            {/* <img
                             className={cx("image_1")}
                             src={image.commingsoon_image_1}
                         />
@@ -42,11 +42,11 @@ function Commingsoon() {
                             className={cx("image_3")}
                             src={image.commingsoon_image_3}
                         /> */}
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default Commingsoon;

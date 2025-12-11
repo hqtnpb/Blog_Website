@@ -1,0 +1,356 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap");
+
+.reports-container {
+  font-family: "Manrope", sans-serif;
+  padding: 3rem;
+  max-width: 140rem;
+  margin: 0 auto;
+
+  @media (max-width: 1024px) {
+    padding: 2.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 2rem;
+
+  p {
+    font-size: 1.8rem;
+    color: #666;
+    font-weight: 600;
+  }
+}
+
+.loading-icon {
+  font-size: 4rem;
+  color: #ff5b26;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.header-icon {
+  font-size: 4rem;
+  color: #ff5b26;
+  background: linear-gradient(135deg, #fff9e5 0%, #ffe8d6 100%);
+  padding: 2rem;
+  border-radius: 1.6rem;
+}
+
+.title {
+  font-family: "Syne", sans-serif;
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: #191b1d;
+  margin: 0 0 0.8rem 0;
+
+  @media (max-width: 768px) {
+    font-size: 2.6rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.6rem;
+  color: #666;
+  margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+}
+
+/* Report Types Grid */
+.report-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr));
+  gap: 2.4rem;
+  margin-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+}
+
+.report-type-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 1.6rem;
+  padding: 3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-color: #ff5b26;
+  }
+
+  &.active {
+    border-color: #ff5b26;
+    background: linear-gradient(135deg, #fff9e5 0%, #ffe8d6 100%);
+    box-shadow: 0 4px 16px rgba(255, 91, 38, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    padding: 2.4rem;
+  }
+}
+
+.report-icon {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 3rem;
+  color: white;
+}
+
+.report-name {
+  font-family: "Syne", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #191b1d;
+  margin: 0 0 1rem 0;
+
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+  }
+}
+
+.report-description {
+  font-size: 1.4rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Filters Section */
+.filters-section {
+  background: white;
+  border-radius: 1.6rem;
+  padding: 3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    padding: 2.4rem;
+  }
+}
+
+.section-title {
+  font-family: "Syne", sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #191b1d;
+  margin: 0 0 2.4rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+
+  svg {
+    color: #ff5b26;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+  gap: 2.4rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #191b1d;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  svg {
+    color: #ff5b26;
+    font-size: 1.4rem;
+  }
+}
+
+.filter-select,
+.filter-input {
+  height: 4.8rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 1rem;
+  padding: 0 1.6rem;
+  font-size: 1.5rem;
+  color: #191b1d;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: "Manrope", sans-serif;
+  background: white;
+
+  &:focus {
+    border-color: #ff5b26;
+    box-shadow: 0 0 0 3px rgba(255, 91, 38, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    height: 4.5rem;
+    font-size: 1.4rem;
+  }
+}
+
+.filter-select {
+  cursor: pointer;
+}
+
+/* Action Section */
+.action-section {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.generate-btn {
+  background: linear-gradient(135deg, #ff5b26 0%, #ff8c42 100%);
+  color: white;
+  border: none;
+  border-radius: 1.2rem;
+  padding: 1.6rem 4rem;
+  font-size: 1.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  transition: all 0.3s ease;
+  font-family: "Manrope", sans-serif;
+  box-shadow: 0 4px 12px rgba(255, 91, 38, 0.3);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 91, 38, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  svg {
+    font-size: 1.8rem;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+    font-size: 1.6rem;
+    padding: 1.4rem 3rem;
+  }
+}
+
+/* Stats Preview */
+.stats-preview {
+  background: white;
+  border-radius: 1.6rem;
+  padding: 3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  @media (max-width: 768px) {
+    padding: 2.4rem;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+  gap: 2.4rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #fff9e5 0%, #ffe8d6 100%);
+  border-radius: 1.2rem;
+  padding: 2.4rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.stat-icon {
+  font-size: 3.5rem;
+  color: #ff5b26;
+  background: white;
+  padding: 1.6rem;
+  border-radius: 1rem;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 1.4rem;
+  color: #666;
+  margin: 0 0 0.6rem 0;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-family: "Syne", sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #191b1d;
+  margin: 0;
+}
