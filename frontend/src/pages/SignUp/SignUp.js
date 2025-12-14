@@ -100,7 +100,7 @@ function SignUp() {
                 height="24"
               />
               <Button inactive className={cx("auth-btn")}>
-                Ti\u1ebfp t\u1ee5c v\u1edbi Google
+                Tiếp tục với Google
               </Button>
             </div>
             <div className={cx("group")}>
