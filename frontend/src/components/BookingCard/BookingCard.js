@@ -1,31 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import styles from "./BookingCard.module.scss";
 import classNames from "classnames/bind";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { format } from "date-fns";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarDays } from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
-
-const imgVector =
-  "https://www.figma.com/api/mcp/asset/fe4120c9-7505-42be-84ab-28ea8dba2843";
-const img =
-  "https://www.figma.com/api/mcp/asset/369484a3-a29b-473e-bc59-212c685b718d";
-const img1 =
-  "https://www.figma.com/api/mcp/asset/f2376971-51d9-4bea-8476-af5b4d39102e";
 
 function Calendar({ className }) {
   return (
     <div className={className} data-name="calendar" data-node-id="307:4441">
       <div className={cx("calendar-vector")}>
-        <img
-          alt="Calendar"
+        <FontAwesomeIcon
+          icon={faCalendarDays}
           className={cx("calendar-icon")}
-          src={imgVector}
-          loading="lazy"
-          width="20"
-          height="20"
+          style={{ width: "20px", height: "20px" }}
         />
       </div>
     </div>
@@ -55,7 +47,11 @@ function GuestPicker({ guests, setGuests, rooms, setRooms }) {
   );
 }
 
-export default function BookingCard({ hotel, priceRange }) {
+export default function BookingCard({
+  hotel,
+  priceRange,
+  onPriceFilterChange,
+}) {
   const [openDate, setOpenDate] = useState(false);
   const [date, setDate] = useState([
     {
@@ -67,21 +63,38 @@ export default function BookingCard({ hotel, priceRange }) {
   const [openGuests, setOpenGuests] = useState(false);
   const [guests, setGuests] = useState(2);
   const [rooms, setRooms] = useState(1);
+  const [priceFilter, setPriceFilter] = useState({ min: 0, max: 10000000 });
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Get valid price range - memoized to avoid recalculation
+  const validPriceRange = useMemo(() => {
+    if (
+      priceRange &&
+      priceRange.min !== Infinity &&
+      priceRange.max !== 0 &&
+      priceRange.max > priceRange.min
+    ) {
+      return priceRange;
+    }
+    // Fallback: calculate from hotel rooms
+    if (hotel?.rooms && hotel.rooms.length > 0) {
+      const prices = hotel.rooms
+        .map((r) => r.pricePerNight || 0)
+        .filter((p) => p > 0);
+      if (prices.length > 0) {
+        return {
+          min: Math.min(...prices),
+          max: Math.max(...prices),
+        };
+      }
+    }
+    // Default fallback
+    return { min: 0, max: 10000000 };
+  }, [priceRange, hotel]);
 
   // Get price from hotel data or priceRange prop
-  const minPrice =
-    priceRange && priceRange.min !== Infinity
-      ? priceRange.min
-      : hotel?.rooms && hotel.rooms.length > 0
-      ? Math.min(...hotel.rooms.map((r) => r.pricePerNight || 0))
-      : 0;
-
-  const maxPrice =
-    priceRange && priceRange.max !== 0
-      ? priceRange.max
-      : hotel?.rooms && hotel.rooms.length > 0
-      ? Math.max(...hotel.rooms.map((r) => r.pricePerNight || 0))
-      : 0;
+  const minPrice = validPriceRange.min;
+  const maxPrice = validPriceRange.max;
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -93,6 +106,29 @@ export default function BookingCard({ hotel, priceRange }) {
 
   const datePickerRef = useRef(null);
   const guestPickerRef = useRef(null);
+
+  // Initialize price filter when hotel/priceRange loads - only once
+  useEffect(() => {
+    if (!isInitialized && validPriceRange.min < validPriceRange.max) {
+      const initialFilter = {
+        min: validPriceRange.min,
+        max: validPriceRange.max,
+      };
+      setPriceFilter(initialFilter);
+      setIsInitialized(true);
+      if (onPriceFilterChange) {
+        onPriceFilterChange(initialFilter);
+      }
+    }
+  }, [validPriceRange, isInitialized, onPriceFilterChange]);
+
+  // Update parent when price filter changes
+  const handlePriceFilterChange = (newFilter) => {
+    setPriceFilter(newFilter);
+    if (onPriceFilterChange) {
+      onPriceFilterChange(newFilter);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -158,14 +194,12 @@ export default function BookingCard({ hotel, priceRange }) {
                 data-node-id="I4908:89460;1780:25186"
               >
                 <div className={cx("date-divider-image-inner")}>
-                  <img
-                    alt="Divider"
-                    className={cx("date-divider-image")}
-                    src={img}
-                    loading="lazy"
-                    width="30"
-                    height="30"
-                  />
+                  <span
+                    className={cx("date-divider-icon")}
+                    style={{ fontSize: "20px" }}
+                  >
+                    →
+                  </span>
                 </div>
               </div>
             </div>
@@ -210,14 +244,7 @@ export default function BookingCard({ hotel, priceRange }) {
           data-node-id="I4908:89460;1780:25058"
         >
           <div className={cx("guest-divider-inner")}>
-            <img
-              alt="Divider"
-              className={cx("guest-divider-image")}
-              src={img1}
-              loading="lazy"
-              width="30"
-              height="30"
-            />
+            <div className={cx("guest-divider-line")} />
           </div>
         </div>
         <div
@@ -275,6 +302,71 @@ export default function BookingCard({ hotel, priceRange }) {
           )}
         </div>
       </div>
+
+      {/* Price Filter Section */}
+      {validPriceRange.min < validPriceRange.max && (
+        <div className={cx("price-filter-section")}>
+          <div className={cx("price-filter-header")}>
+            <h3 className={cx("price-filter-title")}>Lọc theo giá</h3>
+            <span className={cx("price-filter-range")}>
+              {formatPrice(priceFilter.min)} - {formatPrice(priceFilter.max)}
+            </span>
+          </div>
+          <div className={cx("price-filter-sliders")}>
+            <div className={cx("price-slider-group")}>
+              <label>Giá tối thiểu:</label>
+              <input
+                type="range"
+                min={validPriceRange.min}
+                max={validPriceRange.max}
+                step="100000"
+                value={priceFilter.min}
+                onChange={(e) =>
+                  handlePriceFilterChange({
+                    ...priceFilter,
+                    min: Math.min(Number(e.target.value), priceFilter.max),
+                  })
+                }
+                className={cx("price-slider")}
+              />
+              <span className={cx("price-value")}>
+                {formatPrice(priceFilter.min)}
+              </span>
+            </div>
+            <div className={cx("price-slider-group")}>
+              <label>Giá tối đa:</label>
+              <input
+                type="range"
+                min={validPriceRange.min}
+                max={validPriceRange.max}
+                step="100000"
+                value={priceFilter.max}
+                onChange={(e) =>
+                  handlePriceFilterChange({
+                    ...priceFilter,
+                    max: Math.max(Number(e.target.value), priceFilter.min),
+                  })
+                }
+                className={cx("price-slider")}
+              />
+              <span className={cx("price-value")}>
+                {formatPrice(priceFilter.max)}
+              </span>
+            </div>
+          </div>
+          <button
+            className={cx("reset-price-filter")}
+            onClick={() =>
+              handlePriceFilterChange({
+                min: validPriceRange.min,
+                max: validPriceRange.max,
+              })
+            }
+          >
+            Đặt lại bộ lọc
+          </button>
+        </div>
+      )}
 
       <div
         className={cx("prices-section")}

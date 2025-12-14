@@ -8,10 +8,10 @@ import styles from "./ReviewModal.module.scss";
 
 const cx = classNames.bind(styles);
 
-function ReviewModal({ bookingId, onClose, onSuccess }) {
-  const [rating, setRating] = useState(0);
+function ReviewModal({ bookingId, onClose, onSuccess, initialData, isEdit }) {
+  const [rating, setRating] = useState(initialData?.rating || 0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState(initialData?.comment || "");
   const [submitting, setSubmitting] = useState(false);
 
   const apiUrl =
@@ -49,17 +49,30 @@ function ReviewModal({ bookingId, onClose, onSuccess }) {
         },
       };
 
-      const payload = {
-        bookingId: bookingId,
-        rating,
-        comment: comment.trim(),
-      };
+      let response;
+      if (isEdit && initialData?._id) {
+        // Update existing review
+        response = await axios.put(
+          `${apiUrl}/reviews/${initialData._id}`,
+          {
+            rating,
+            comment: comment.trim(),
+          },
+          config
+        );
+        toast.success("Đánh giá đã được cập nhật thành công!");
+      } else {
+        // Create new review
+        const payload = {
+          bookingId: bookingId,
+          rating,
+          comment: comment.trim(),
+        };
+        console.log("📝 Submitting review:", payload);
+        response = await axios.post(`${apiUrl}/reviews`, payload, config);
+        toast.success("Đánh giá đã được gửi thành công!");
+      }
 
-      console.log("📝 Submitting review:", payload);
-
-      await axios.post(`${apiUrl}/reviews`, payload, config);
-
-      toast.success("Review submitted successfully!");
       onSuccess();
       onClose();
     } catch (error) {
@@ -75,7 +88,7 @@ function ReviewModal({ bookingId, onClose, onSuccess }) {
     <div className={cx("modal-overlay")} onClick={onClose}>
       <div className={cx("modal-content")} onClick={(e) => e.stopPropagation()}>
         <div className={cx("modal-header")}>
-          <h2>Write a Review</h2>
+          <h2>{isEdit ? "Chỉnh sửa đánh giá" : "Viết đánh giá"}</h2>
           <button className={cx("close-btn")} onClick={onClose}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
@@ -140,8 +153,10 @@ function ReviewModal({ bookingId, onClose, onSuccess }) {
               {submitting ? (
                 <>
                   <FontAwesomeIcon icon={faSpinner} spin />
-                  <span>Đang gửi...</span>
+                  <span>{isEdit ? "Đang cập nhật..." : "Đang gửi..."}</span>
                 </>
+              ) : isEdit ? (
+                "Cập nhật đánh giá"
               ) : (
                 "Gửi đánh giá"
               )}

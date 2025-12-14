@@ -75,7 +75,17 @@ function SearchResult() {
     } finally {
       setLoading(false);
     }
-  }, [query, currentPage, sortBy, checkIn, checkOut, rooms, adults, children]);
+  }, [
+    query,
+    currentPage,
+    sortBy,
+    checkIn,
+    checkOut,
+    rooms,
+    adults,
+    children,
+    filters,
+  ]);
 
   useEffect(() => {
     fetchHotels();
@@ -91,23 +101,18 @@ function SearchResult() {
     setCurrentPage(1);
   }, []);
 
-  const handleFiltersChange = useCallback(
-    (newFilters) => {
-      // Map FilterPanel state to backend format
-      setFilters({
-        minPrice: newFilters.priceRange?.[0],
-        maxPrice: newFilters.priceRange?.[1],
-        distance: newFilters.distance,
-        guestReview: newFilters.selectedReviews || [],
-        propertyClass: newFilters.selectedStars || [],
-        amenities: newFilters.selectedAmenities || [],
-      });
-      setCurrentPage(1);
-      // Trigger fetch manually after filter change
-      setTimeout(() => fetchHotels(), 0);
-    },
-    [fetchHotels]
-  );
+  const handleFiltersChange = useCallback((newFilters) => {
+    // Map FilterPanel state to backend format
+    setFilters({
+      minPrice: newFilters.priceRange?.[0],
+      maxPrice: newFilters.priceRange?.[1],
+      distance: newFilters.distance,
+      guestReview: newFilters.selectedReviews || [],
+      propertyClass: newFilters.selectedStars || [],
+      amenities: newFilters.selectedAmenities || [],
+    });
+    setCurrentPage(1);
+  }, []);
 
   return (
     <div className={cx("search-result-page")}>
@@ -156,7 +161,7 @@ function SearchResult() {
               <button
                 className={cx("view-btn", { active: viewMode === "list" })}
                 onClick={() => setViewMode("list")}
-                aria-label="List view"
+                aria-label="Xem dạng danh sách"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24">
                   <path
@@ -168,7 +173,7 @@ function SearchResult() {
               <button
                 className={cx("view-btn", { active: viewMode === "grid" })}
                 onClick={() => setViewMode("grid")}
-                aria-label="Grid view"
+                aria-label="Xem dạng lưới"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24">
                   <path

@@ -61,9 +61,9 @@ function AdminNotifications() {
           notif._id === notificationId ? { ...notif, seen: true } : notif
         )
       );
-      toast.success("Marked as read");
+      toast.success("Đã đánh dấu là đã đọc");
     } catch (error) {
-      toast.error(error.message || "Failed to mark as read");
+      toast.error(error.message || "Không thể đánh dấu là đã đọc");
     }
   };
 
@@ -74,9 +74,9 @@ function AdminNotifications() {
       setNotifications((prev) =>
         prev.map((notif) => ({ ...notif, seen: true }))
       );
-      toast.success("All notifications marked as read");
+      toast.success("Đã đánh dấu tất cả là đã đọc");
     } catch (error) {
-      toast.error(error.message || "Failed to mark all as read");
+      toast.error(error.message || "Không thể đánh dấu tất cả là đã đọc");
     } finally {
       setMarkingAllRead(false);
     }
@@ -89,9 +89,9 @@ function AdminNotifications() {
       setNotifications((prev) =>
         prev.filter((notif) => notif._id !== notificationId)
       );
-      toast.success("Notification deleted");
+      toast.success("Đã xóa thông báo");
     } catch (error) {
-      toast.error(error.message || "Failed to delete notification");
+      toast.error(error.message || "Không thể xóa thông báo");
     } finally {
       setDeleting(null);
     }
@@ -125,17 +125,21 @@ function AdminNotifications() {
 
     switch (type) {
       case "like":
-        return `${username} liked your post "${blog?.title || "Untitled"}"`;
+        return `${username} đã thích bài viết "${
+          blog?.title || "Không có tiêu đề"
+        }"`;
       case "comment":
-        return `${username} commented on "${blog?.title || "Untitled"}"`;
+        return `${username} đã bình luận về "${
+          blog?.title || "Không có tiêu đề"
+        }"`;
       case "reply":
-        return `${username} replied to your comment`;
+        return `${username} đã trả lời bình luận của bạn`;
       case "booking":
-        return `New booking received from ${username}`;
+        return `Đơn đặt phòng mới từ ${username}`;
       case "cancellation":
-        return `${username} cancelled a booking`;
+        return `${username} đã hủy đơn đặt phòng`;
       default:
-        return "New notification";
+        return "Thông báo mới";
     }
   };
 
@@ -147,10 +151,10 @@ function AdminNotifications() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) return "Vừa xong";
+    if (diffMins < 60) return `${diffMins} phút trước`;
+    if (diffHours < 24) return `${diffHours} giờ trước`;
+    if (diffDays < 7) return `${diffDays} ngày trước`;
     return notifDate.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -174,9 +178,9 @@ function AdminNotifications() {
       <div className={cx("header")}>
         <div className={cx("header-left")}>
           <FontAwesomeIcon icon={faBell} className={cx("header-icon")} />
-          <h1 className={cx("title")}>Notifications</h1>
+          <h1 className={cx("title")}>Thông báo</h1>
           {unreadCount > 0 && (
-            <span className={cx("unread-badge")}>{unreadCount} unread</span>
+            <span className={cx("unread-badge")}>{unreadCount} chưa đọc</span>
           )}
         </div>
         {notifications.length > 0 && (
@@ -186,7 +190,7 @@ function AdminNotifications() {
             disabled={markingAllRead || unreadCount === 0}
           >
             <FontAwesomeIcon icon={faCheckDouble} />
-            {markingAllRead ? "Marking..." : "Mark all as read"}
+            {markingAllRead ? "Đang đánh dấu..." : "Đánh dấu tất cả là đã đọc"}
           </button>
         )}
       </div>
@@ -195,17 +199,24 @@ function AdminNotifications() {
       <div className={cx("filters")}>
         <FontAwesomeIcon icon={faFilter} className={cx("filter-icon")} />
         <div className={cx("filter-tabs")}>
-          {["all", "like", "comment", "reply", "booking", "cancellation"].map(
-            (filterType) => (
-              <button
-                key={filterType}
-                className={cx("filter-tab", { active: filter === filterType })}
-                onClick={() => handleFilterChange(filterType)}
-              >
-                {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
-              </button>
-            )
-          )}
+          {[
+            { key: "all", label: "Tất cả" },
+            { key: "like", label: "Thích" },
+            { key: "comment", label: "Bình luận" },
+            { key: "reply", label: "Trả lời" },
+            { key: "booking", label: "Đặt phòng" },
+            { key: "cancellation", label: "Hủy đơn" },
+          ].map((filterType) => (
+            <button
+              key={filterType.key}
+              className={cx("filter-tab", {
+                active: filter === filterType.key,
+              })}
+              onClick={() => handleFilterChange(filterType.key)}
+            >
+              {filterType.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -217,11 +228,21 @@ function AdminNotifications() {
               icon={faExclamationCircle}
               className={cx("empty-icon")}
             />
-            <h3>No notifications</h3>
+            <h3>Không có thông báo</h3>
             <p>
               {filter === "all"
-                ? "You're all caught up!"
-                : `No ${filter} notifications found`}
+                ? "Bạn đã xem hết thông báo!"
+                : `Không tìm thấy thông báo ${
+                    filter === "like"
+                      ? "thích"
+                      : filter === "comment"
+                      ? "bình luận"
+                      : filter === "reply"
+                      ? "trả lời"
+                      : filter === "booking"
+                      ? "đặt phòng"
+                      : "hủy đơn"
+                  }`}
             </p>
           </div>
         ) : (
@@ -278,7 +299,7 @@ function AdminNotifications() {
                     <button
                       className={cx("action-btn", "read-btn")}
                       onClick={() => handleMarkAsRead(notification._id)}
-                      title="Mark as read"
+                      title="Đánh dấu là đã đọc"
                     >
                       <FontAwesomeIcon icon={faEnvelopeOpen} />
                     </button>
@@ -287,7 +308,7 @@ function AdminNotifications() {
                     className={cx("action-btn", "delete-btn")}
                     onClick={() => handleDelete(notification._id)}
                     disabled={deleting === notification._id}
-                    title="Delete"
+                    title="Xóa"
                   >
                     <FontAwesomeIcon
                       icon={deleting === notification._id ? faSpinner : faTrash}

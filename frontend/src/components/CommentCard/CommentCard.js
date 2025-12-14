@@ -154,9 +154,7 @@ function CommentCard({ index, leftVal, commentData }) {
             comments: { ...comments, results: commentsArr },
           });
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     }
   };
   const handleReply = () => {

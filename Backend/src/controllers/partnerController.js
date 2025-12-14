@@ -78,11 +78,9 @@ const partnerController = {
       }).populate("rooms");
 
       if (!hotel) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       res.status(200).json(hotel);
@@ -146,11 +144,9 @@ const partnerController = {
       );
 
       if (!updatedHotel) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       res.status(200).json(updatedHotel);
@@ -170,11 +166,9 @@ const partnerController = {
         partner: partnerId,
       });
       if (!hotelToDelete) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       // Delete all rooms associated with this hotel
@@ -188,11 +182,9 @@ const partnerController = {
         $pull: { "partner_info.hotel": hotelId },
       });
 
-      res
-        .status(200)
-        .json({
-          message: "Đã xóa khách sạn và các phòng liên quan thành công",
-        });
+      res.status(200).json({
+        message: "Đã xóa khách sạn và các phòng liên quan thành công",
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -228,11 +220,9 @@ const partnerController = {
       // Verify the hotel belongs to the partner
       const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });
       if (!hotel) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       // Check if roomNumber already exists for this hotel
@@ -256,6 +246,8 @@ const partnerController = {
         desc: roomDesc,
         roomType: type, // Set roomType giống với type
         pricePerNight,
+        pricePerDay: req.body.pricePerDay || 0,
+        bookingTypes: req.body.bookingTypes || ["night"],
         maxAdults,
         maxChildren,
         amenities,
@@ -282,21 +274,17 @@ const partnerController = {
       // Verify the hotel belongs to the partner
       const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });
       if (!hotel) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       const room = await Room.findOne({ _id: roomId, hotel: hotelId });
 
       if (!room) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy phòng hoặc không thuộc khách sạn này",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy phòng hoặc không thuộc khách sạn này",
+        });
       }
 
       res.status(200).json(room);
@@ -315,6 +303,8 @@ const partnerController = {
         title,
         desc,
         pricePerNight,
+        pricePerDay,
+        bookingTypes,
         maxAdults,
         maxChildren,
         amenities,
@@ -324,11 +314,9 @@ const partnerController = {
       // Verify the hotel belongs to the partner
       const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });
       if (!hotel) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       const updateData = {
@@ -342,6 +330,10 @@ const partnerController = {
         images,
       };
 
+      // Add new booking type fields
+      if (pricePerDay !== undefined) updateData.pricePerDay = pricePerDay;
+      if (bookingTypes !== undefined) updateData.bookingTypes = bookingTypes;
+
       // Only update title/desc if provided
       if (title) updateData.title = title;
       if (desc) updateData.desc = desc;
@@ -353,11 +345,9 @@ const partnerController = {
       );
 
       if (!updatedRoom) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy phòng hoặc không thuộc khách sạn này",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy phòng hoặc không thuộc khách sạn này",
+        });
       }
 
       res.status(200).json(updatedRoom);
@@ -374,11 +364,9 @@ const partnerController = {
       // Verify the hotel belongs to the partner
       const hotel = await Hotel.findOne({ _id: hotelId, partner: partnerId });
       if (!hotel) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       const deletedRoom = await Room.findOneAndDelete({
@@ -387,11 +375,9 @@ const partnerController = {
       });
 
       if (!deletedRoom) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy phòng hoặc không thuộc khách sạn này",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy phòng hoặc không thuộc khách sạn này",
+        });
       }
 
       // Remove room from hotel's rooms array
@@ -417,11 +403,9 @@ const partnerController = {
         partner: partnerId,
       }).populate("rooms");
       if (!hotel) {
-        return res
-          .status(404)
-          .json({
-            error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
-          });
+        return res.status(404).json({
+          error: "Không tìm thấy khách sạn hoặc bạn không có quyền truy cập",
+        });
       }
 
       // Build date range for the month

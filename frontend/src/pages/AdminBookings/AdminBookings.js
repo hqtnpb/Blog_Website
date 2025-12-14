@@ -210,6 +210,7 @@ function AdminBookings() {
               <th>Số đêm</th>
               <th>Tổng tiền</th>
               <th>Trạng thái</th>
+              <th>Thanh toán</th>
               <th>Hành động</th>
             </tr>
           </thead>
@@ -265,6 +266,39 @@ function AdminBookings() {
                       </span>
                     </td>
                     <td>
+                      <span
+                        className={cx("paymentBadge")}
+                        style={{
+                          background:
+                            booking.paymentStatus === "confirmed"
+                              ? "#10b98120"
+                              : booking.paymentStatus === "processing"
+                              ? "#f59e0b20"
+                              : booking.paymentStatus === "failed"
+                              ? "#ef444420"
+                              : "#6b728020",
+                          color:
+                            booking.paymentStatus === "confirmed"
+                              ? "#10b981"
+                              : booking.paymentStatus === "processing"
+                              ? "#f59e0b"
+                              : booking.paymentStatus === "failed"
+                              ? "#ef4444"
+                              : "#6b7280",
+                        }}
+                      >
+                        {booking.paymentStatus === "confirmed"
+                          ? "✓ Đã TT"
+                          : booking.paymentStatus === "processing"
+                          ? "⌛ Đang xử lý"
+                          : booking.paymentStatus === "pending"
+                          ? "⏳ Chờ TT"
+                          : booking.paymentStatus === "failed"
+                          ? "✗ Thất bại"
+                          : "-"}
+                      </span>
+                    </td>
+                    <td>
                       <button
                         className={cx("viewBtn")}
                         onClick={() => handleViewDetails(booking)}
@@ -277,7 +311,7 @@ function AdminBookings() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className={cx("emptyState")}>
+                  <td colSpan="11" className={cx("emptyState")}>
                     <FontAwesomeIcon
                       icon={faCalendar}
                       className={cx("emptyIcon")}
@@ -370,6 +404,44 @@ function AdminBookings() {
                       <label>Tổng tiền:</label>
                       <span className={cx("price")}>
                         {formatCurrency(selectedBooking.totalPrice)}
+                      </span>
+                    </div>
+                    <div className={cx("infoItem")}>
+                      <label>Phương thức thanh toán:</label>
+                      <span>
+                        {selectedBooking.paymentMethod === "momo"
+                          ? "MoMo"
+                          : selectedBooking.paymentMethod === "vnpay"
+                          ? "VNPay"
+                          : selectedBooking.paymentMethod === "cash"
+                          ? "Tiền mặt"
+                          : "Chưa chọn"}
+                      </span>
+                    </div>
+                    <div className={cx("infoItem")}>
+                      <label>Trạng thái thanh toán:</label>
+                      <span
+                        style={{
+                          color:
+                            selectedBooking.paymentStatus === "confirmed"
+                              ? "#10b981"
+                              : selectedBooking.paymentStatus === "processing"
+                              ? "#f59e0b"
+                              : selectedBooking.paymentStatus === "failed"
+                              ? "#ef4444"
+                              : "#6b7280",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {selectedBooking.paymentStatus === "confirmed"
+                          ? "Đã thanh toán"
+                          : selectedBooking.paymentStatus === "processing"
+                          ? "Đang xử lý"
+                          : selectedBooking.paymentStatus === "pending"
+                          ? "Chờ thanh toán"
+                          : selectedBooking.paymentStatus === "failed"
+                          ? "Thất bại"
+                          : "Chưa rõ"}
                       </span>
                     </div>
                   </div>

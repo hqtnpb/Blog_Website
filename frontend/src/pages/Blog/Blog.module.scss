@@ -29,6 +29,7 @@
                 font-size: 7.2rem;
                 font-weight: 700;
                 line-height: 1;
+                text-align: center;
                 @include abstracts.screen(sm) {
                     width: 100%;
                     padding: 0 10px;

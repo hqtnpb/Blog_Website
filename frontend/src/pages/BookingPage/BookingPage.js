@@ -53,7 +53,13 @@ function BookingPage() {
 
   // Get booking data from navigation state
   const bookingData = location.state || {};
-  const { checkIn, checkOut, adults = 1, children = 0 } = bookingData;
+  const {
+    checkIn,
+    checkOut,
+    adults = 1,
+    children = 0,
+    bookingType = "night",
+  } = bookingData;
 
   // Form data
   const [formData, setFormData] = useState({
@@ -99,7 +105,7 @@ function BookingPage() {
 
       // Check if rooms exist
       if (!hotelData.rooms || !Array.isArray(hotelData.rooms)) {
-        throw new Error("This hotel has no rooms available");
+        throw new Error("Khách sạn này không có phòng khả dụng");
       }
 
       // Find the specific room from hotel's rooms array
@@ -111,14 +117,14 @@ function BookingPage() {
 
       if (!roomData) {
         throw new Error(
-          "Selected room not found. Please try selecting another room."
+          "Không tìm thấy phòng đã chọn. Vui lòng chọn phòng khác."
         );
       }
 
       // If room is just an ObjectId string, we need to fetch it separately
       if (typeof roomData === "string" || !roomData.title) {
         throw new Error(
-          "Room details not available. Please refresh the page and try again."
+          "Không có thông tin chi tiết phòng. Vui lòng tải lại trang và thử lại."
         );
       }
 
@@ -128,7 +134,7 @@ function BookingPage() {
       const errorMsg =
         err.response?.data?.message ||
         err.message ||
-        "Failed to load booking details";
+        "Không thể tải thông tin đặt phòng";
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -150,9 +156,9 @@ function BookingPage() {
 
       if (!response.data.available) {
         setAvailabilityWarning(
-          "⚠️ This room is not available for the selected dates. Please choose different dates."
+          "⚠️ Phòng này không khả dụng cho ngày đã chọn. Vui lòng chọn ngày khác."
         );
-        toast.error("Room not available for selected dates");
+        toast.error("Phòng không khả dụng cho ngày đã chọn");
       } else {
         setAvailabilityWarning(null);
       }
@@ -182,10 +188,52 @@ function BookingPage() {
     return diffDays;
   };
 
+  const getPricePerUnit = () => {
+    if (!room) return 0;
+
+    const actualBookingType = getActualBookingType();
+
+    if (actualBookingType === "day") {
+      return room.pricePerDay || room.pricePerNight;
+    } else if (actualBookingType === "both") {
+      const dayPrice = room.pricePerDay || 0;
+      const nightPrice = room.pricePerNight || 0;
+      return dayPrice + nightPrice;
+    } else {
+      return room.pricePerNight || 0;
+    }
+  };
+
+  const getActualBookingType = () => {
+    // Nếu phòng không hỗ trợ booking type được chọn, fallback về night
+    if (
+      !room ||
+      !room.bookingTypes ||
+      !room.bookingTypes.includes(bookingType)
+    ) {
+      return "night";
+    }
+    return bookingType;
+  };
+
+  const getUnitLabel = () => {
+    const actualBookingType = getActualBookingType();
+    if (actualBookingType === "day") return "ngày";
+    if (actualBookingType === "both") return "ngày & đêm";
+    return "đêm";
+  };
+
+  const getBookingTypeLabel = () => {
+    const actualBookingType = getActualBookingType();
+    if (actualBookingType === "day") return "Đặt theo ngày";
+    if (actualBookingType === "both") return "Cả ngày & đêm";
+    return "Đặt theo đêm";
+  };
+
   const calculateTotal = () => {
     if (!room) return 0;
-    const nights = calculateNights();
-    return room.pricePerNight * nights;
+    const units = calculateNights();
+    return getPricePerUnit() * units;
   };
 
   const formatPrice = (price) => {
@@ -225,6 +273,7 @@ function BookingPage() {
         numberOfAdults: adults,
         numberOfChildren: children,
         specialRequests: formData.specialRequests,
+        bookingType: bookingType, // "night", "day", or "both"
       };
 
       console.log("Submitting booking:", bookingPayload);
@@ -322,6 +371,15 @@ function BookingPage() {
   const nights = calculateNights();
   const totalPrice = calculateTotal();
 
+  // Debug: Log booking type
+  console.log("BookingPage - Requested bookingType:", bookingType);
+  console.log("BookingPage - Actual bookingType:", getActualBookingType());
+  console.log("BookingPage - Room bookingTypes:", room?.bookingTypes);
+  console.log("BookingPage - pricePerUnit:", getPricePerUnit());
+  console.log("BookingPage - unitLabel:", getUnitLabel());
+  console.log("BookingPage - nights:", nights);
+  console.log("BookingPage - totalPrice:", totalPrice);
+
   return (
     <div className={cx("booking-page")}>
       <div className={cx("container")}>
@@ -358,12 +416,26 @@ function BookingPage() {
                     <input
                       type="date"
                       value={dates.checkIn || ""}
-                      onChange={(e) =>
-                        setDates((prev) => ({
-                          ...prev,
-                          checkIn: e.target.value,
-                        }))
-                      }
+                      onChange={(e) => {
+                        const newCheckIn = e.target.value;
+                        const checkInDate = new Date(newCheckIn);
+                        const checkOutDate = new Date(dates.checkOut);
+
+                        // Nếu checkout <= checkin, tự động set checkout = checkin + 1 ngày
+                        if (checkOutDate <= checkInDate) {
+                          const nextDay = new Date(checkInDate);
+                          nextDay.setDate(nextDay.getDate() + 1);
+                          setDates({
+                            checkIn: newCheckIn,
+                            checkOut: nextDay.toISOString().split("T")[0],
+                          });
+                        } else {
+                          setDates((prev) => ({
+                            ...prev,
+                            checkIn: newCheckIn,
+                          }));
+                        }
+                      }}
                       min={new Date().toISOString().split("T")[0]}
                       required
                     />
@@ -390,9 +462,13 @@ function BookingPage() {
                           checkOut: e.target.value,
                         }))
                       }
-                      min={
-                        dates.checkIn || new Date().toISOString().split("T")[0]
-                      }
+                      min={(() => {
+                        if (!dates.checkIn)
+                          return new Date().toISOString().split("T")[0];
+                        const minDate = new Date(dates.checkIn);
+                        minDate.setDate(minDate.getDate() + 1);
+                        return minDate.toISOString().split("T")[0];
+                      })()}
                       required
                     />
                   </div>
@@ -540,9 +616,22 @@ function BookingPage() {
                       ? format(new Date(dates.checkOut), "EEE, dd MMM, yyyy")
                       : "Chưa chọn"}
                   </p>
-                  <span className={cx("nights")}>{nights} đêm</span>
+                  <span className={cx("nights")}>
+                    {nights} {getUnitLabel()}
+                  </span>
                 </div>
               </div>
+
+              {/* Booking Type */}
+              {bookingType && (
+                <div className={cx("info-row")}>
+                  <FontAwesomeIcon icon={faBed} />
+                  <div>
+                    <strong>Loại đặt phòng:</strong>
+                    <p>{getBookingTypeLabel()}</p>
+                  </div>
+                </div>
+              )}
 
               {/* Guests */}
               <div className={cx("info-row")}>
@@ -560,9 +649,9 @@ function BookingPage() {
               <div className={cx("price-breakdown")}>
                 <div className={cx("price-row")}>
                   <span>
-                    {formatPrice(room.pricePerNight)} x {nights} đêm
+                    {formatPrice(getPricePerUnit())} x {nights} {getUnitLabel()}
                   </span>
-                  <span>{formatPrice(room.pricePerNight * nights)}</span>
+                  <span>{formatPrice(getPricePerUnit() * nights)}</span>
                 </div>
                 <div className={cx("price-total")}>
                   <strong>Tổng cộng</strong>

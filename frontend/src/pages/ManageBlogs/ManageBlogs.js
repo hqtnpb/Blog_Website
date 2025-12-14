@@ -51,9 +51,7 @@ function ManageBlogs() {
           setBlogs(formattedData);
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   useEffect(() => {

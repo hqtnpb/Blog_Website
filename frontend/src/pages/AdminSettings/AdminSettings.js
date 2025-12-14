@@ -10,16 +10,127 @@ import {
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
-import {
-  getProfile,
-  updateProfile,
-  updateAvatar,
-  changePassword,
-} from "~/common/partnerApi";
+import axios from "axios";
 import AvatarUploadWidget from "~/components/AvatarUploadWidget";
 import styles from "./AdminSettings.module.scss";
 
 const cx = classNames.bind(styles);
+const API_URL = process.env.REACT_APP_SERVER_DOMAIN;
+
+// Helper to get auth header
+const getAuthHeader = () => {
+  const user = sessionStorage.getItem("user");
+  if (user) {
+    const { accessToken } = JSON.parse(user);
+    return { headers: { Authorization: `Bearer ${accessToken}` } };
+  }
+  return {};
+};
+
+// Helper to get user role
+const getUserRole = () => {
+  const user = sessionStorage.getItem("user");
+  if (user) {
+    const userData = JSON.parse(user);
+    return userData.role || "user";
+  }
+  return "user";
+};
+
+// API functions that work for both partner and admin
+const getProfile = async () => {
+  const role = getUserRole();
+  try {
+    if (role === "partner") {
+      const response = await axios.get(
+        `${API_URL}/partner/profile`,
+        getAuthHeader()
+      );
+      return response.data;
+    } else {
+      // For admin and regular users, use user API
+      const user = sessionStorage.getItem("user");
+      const { username } = JSON.parse(user);
+      const response = await axios.post(
+        `${API_URL}/user/get-profile`,
+        { username },
+        getAuthHeader()
+      );
+      return response.data; // Backend returns user object directly, not wrapped
+    }
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to fetch profile" };
+  }
+};
+
+const updateProfile = async (profileData) => {
+  const role = getUserRole();
+  try {
+    if (role === "partner") {
+      const response = await axios.put(
+        `${API_URL}/partner/profile`,
+        profileData,
+        getAuthHeader()
+      );
+      return response.data;
+    } else {
+      const response = await axios.put(
+        `${API_URL}/user/update-profile`,
+        profileData,
+        getAuthHeader()
+      );
+      return response.data;
+    }
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to update profile" };
+  }
+};
+
+const updateAvatar = async (imageUrl) => {
+  const role = getUserRole();
+  try {
+    if (role === "partner") {
+      const response = await axios.put(
+        `${API_URL}/partner/avatar`,
+        { profile_img: imageUrl },
+        getAuthHeader()
+      );
+      return response.data;
+    } else {
+      const response = await axios.put(
+        `${API_URL}/user/update-avatar`,
+        { profile_img: imageUrl },
+        getAuthHeader()
+      );
+      return response.data;
+    }
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to update avatar" };
+  }
+};
+
+const changePassword = async (currentPassword, newPassword) => {
+  const role = getUserRole();
+  try {
+    if (role === "partner") {
+      const response = await axios.put(
+        `${API_URL}/partner/change-password`,
+        { currentPassword, newPassword },
+        getAuthHeader()
+      );
+      return response.data;
+    } else {
+      const response = await axios.put(
+        `${API_URL}/user/change-password`,
+        { currentPassword, newPassword },
+        getAuthHeader()
+      );
+      return response.data;
+    }
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to change password" };
+  }
+};
 
 function AdminSettings() {
   const [activeTab, setActiveTab] = useState("edit-profile");
@@ -182,7 +293,7 @@ function AdminSettings() {
             })}
             onClick={() => setActiveTab("edit-profile")}
           >
-            Edit Profile
+            Chỉnh sửa hồ sơ
           </button>
           <button
             className={cx("tab", {
@@ -190,13 +301,13 @@ function AdminSettings() {
             })}
             onClick={() => setActiveTab("preferences")}
           >
-            Preferences
+            Tùy chọn
           </button>
           <button
             className={cx("tab", { active: activeTab === "security" })}
             onClick={() => setActiveTab("security")}
           >
-            Security
+            Bảo mật
           </button>
         </div>
 
@@ -218,7 +329,7 @@ function AdminSettings() {
                 <div className={cx("form-row")}>
                   <div className={cx("form-group")}>
                     <label className={cx("form-label")}>
-                      <FontAwesomeIcon icon={faUser} /> Username
+                      <FontAwesomeIcon icon={faUser} /> Tên người dùng
                     </label>
                     <input
                       type="text"
@@ -226,7 +337,7 @@ function AdminSettings() {
                       value={formData.username}
                       onChange={handleInputChange}
                       className={cx("form-input")}
-                      placeholder="Nhập username"
+                      placeholder="Nhập tên người dùng"
                     />
                   </div>
 
@@ -245,7 +356,7 @@ function AdminSettings() {
                 </div>
 
                 <div className={cx("form-group", "full-width")}>
-                  <label className={cx("form-label")}>Bio</label>
+                  <label className={cx("form-label")}>Tiểu sử</label>
                   <textarea
                     name="bio"
                     value={formData.bio}
@@ -256,7 +367,7 @@ function AdminSettings() {
                   />
                 </div>
 
-                <h3 className={cx("section-title")}>Social Links</h3>
+                <h3 className={cx("section-title")}>Liên kết mạng xã hội</h3>
 
                 <div className={cx("form-row")}>
                   <div className={cx("form-group")}>
@@ -267,7 +378,7 @@ function AdminSettings() {
                       value={formData.youtube}
                       onChange={handleInputChange}
                       className={cx("form-input")}
-                      placeholder="https://youtube.com/@username"
+                      placeholder="https://youtube.com/@tenngdung"
                     />
                   </div>
 
@@ -293,7 +404,7 @@ function AdminSettings() {
                       value={formData.facebook}
                       onChange={handleInputChange}
                       className={cx("form-input")}
-                      placeholder="https://facebook.com/username"
+                      placeholder="https://facebook.com/tenngdung"
                     />
                   </div>
 
@@ -305,7 +416,7 @@ function AdminSettings() {
                       value={formData.twitter}
                       onChange={handleInputChange}
                       className={cx("form-input")}
-                      placeholder="https://twitter.com/username"
+                      placeholder="https://twitter.com/tenngdung"
                     />
                   </div>
                 </div>

@@ -12,7 +12,9 @@ function FeaturesAbout() {
         <div className={cx("inner")}>
           <div className={cx("content")}>
             <div className={cx("left")}>
-              <h2 className={cx("title")}>Our journey begins with travel</h2>
+              <h2 className={cx("title")}>
+                Hành trình của chúng tôi bắt đầu từ du lịch
+              </h2>
               <img
                 className={cx("icon-ft")}
                 src={image.about_icon_feature}
@@ -24,18 +26,17 @@ function FeaturesAbout() {
             </div>
             <div className={cx("right")}>
               <Button text className={cx("btn-ft")}>
-                Our Story
+                Câu chuyện của chúng tôi
               </Button>
               <p className={cx("desc")}>
-                In 1951 we opened our doors in New York City, with a clear focus
-                on customer service as we offered the very first complete
-                vacation package. Soon after, we were helping Americans discover
-                the world with international trips. Today, from being a part of
-                one of the world’s largest travel companies, Flight Centre
-                Travel Group to supporting small travel businesses with
-                Independent by Liberty Travel, our commitment to creating
-                connections, providing one-on-one service, and crafting the
-                perfect vacation remains stronger than ever.
+                Năm 1951, chúng tôi mở cửa tại Thành phố New York, với sự tập
+                trung rõ ràng vào dịch vụ khách hàng khi chúng tôi cung cấp gói
+                kỳ nghỉ hoàn chỉnh đầu tiên. Ngay sau đó, chúng tôi đã giúp mọi
+                người khám phá thế giới với các chuyến đi quốc tế. Ngày nay, từ
+                việc là một phần của một trong những công ty du lịch lớn nhất
+                thế giới, cam kết của chúng tôi trong việc tạo ra kết nối, cung
+                cấp dịch vụ một-đối-một và tạo ra kỳ nghỉ hoàn hảo vẫn mạnh mẽ
+                hơn bao giờ hết.
               </p>
             </div>
           </div>

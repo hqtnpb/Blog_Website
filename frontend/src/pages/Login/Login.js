@@ -88,7 +88,7 @@ function Login() {
       });
   };
   return accessToken ? (
-    <Navigate to="/" />
+    <Navigate to="/hotels" />
   ) : (
     <div className={cx("login")}>
       <div className={cx("main")}>

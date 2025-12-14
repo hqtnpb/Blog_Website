@@ -104,9 +104,32 @@ const bookingController = {
         });
       }
 
-      // Calculate total price
-      const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-      const totalPrice = nights * room.pricePerNight;
+      // Get booking type from request (default to "night" for backward compatibility)
+      const bookingType = req.body.bookingType || "night";
+
+      // Validate booking type is supported by the room
+      if (room.bookingTypes && room.bookingTypes.length > 0) {
+        if (!room.bookingTypes.includes(bookingType)) {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message: `Phòng này không hỗ trợ đặt theo ${bookingType === "day" ? "ngày" : bookingType === "both" ? "cả ngày & đêm" : "đêm"}.`,
+          });
+        }
+      }
+
+      // Calculate total price based on booking type
+      const units = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      let pricePerUnit;
+
+      if (bookingType === "day") {
+        pricePerUnit = room.pricePerDay || room.pricePerNight;
+      } else if (bookingType === "both") {
+        pricePerUnit = (room.pricePerDay || 0) + (room.pricePerNight || 0);
+      } else {
+        pricePerUnit = room.pricePerNight;
+      }
+
+      const totalPrice = units * pricePerUnit;
 
       // Calculate cancellable until (24 hours before check-in)
       const cancellableUntil = new Date(start);
@@ -127,6 +150,7 @@ const bookingController = {
         numberOfAdults,
         numberOfChildren: numberOfChildren || 0,
         specialRequests: specialRequests || "",
+        bookingType: bookingType,
         status: "pending", // Will change to confirmed after payment
         paymentStatus: "pending",
         cancellableUntil,
@@ -177,11 +201,6 @@ const bookingController = {
         const hotel = await Hotel.findById(populatedBooking.hotel._id).select(
           "partner name"
         );
-        console.log("🏨 Hotel info:", {
-          hotelId: hotel?._id,
-          hotelName: hotel?.name,
-          partnerId: hotel?.partner?.toString(),
-        });
 
         if (hotel && hotel.partner) {
           const partnerNotification = createNotification(
@@ -197,17 +216,7 @@ const bookingController = {
               totalPrice,
             }
           );
-          console.log(
-            "📤 Sending notification to partner:",
-            hotel.partner.toString()
-          );
-          const sent = sendNotificationToUser(
-            hotel.partner,
-            partnerNotification
-          );
-          console.log("📬 Partner notification sent:", sent);
-        } else {
-          console.warn("⚠️ No partner found for hotel");
+          sendNotificationToUser(hotel.partner, partnerNotification);
         }
       } catch (partnerNotifError) {
         console.error(
@@ -338,6 +347,9 @@ const bookingController = {
             numberOfChildren: 1,
             specialRequests: 1,
             paymentStatus: 1,
+            paymentMethod: 1,
+            paymentId: 1,
+            bookingType: 1,
             room: {
               _id: "$roomDetails._id",
               roomNumber: "$roomDetails.roomNumber",
@@ -454,10 +466,6 @@ const bookingController = {
               refundAmount,
             }
           );
-          console.log(
-            "📤 Sending cancellation notification to partner:",
-            hotel.partner.toString()
-          );
           sendNotificationToUser(hotel.partner, partnerNotification);
         }
       } catch (partnerNotifError) {
@@ -471,19 +479,7 @@ const bookingController = {
       try {
         const admins = await User.find({
           "personal_info.role": "admin",
-        }).select("_id personal_info.username");
-        console.log(
-          "🔍 Found admins for cancellation notification:",
-          admins.length
-        );
-        admins.forEach((admin) => {
-          console.log(
-            "  - Admin ID:",
-            admin._id,
-            "Username:",
-            admin.personal_info?.username
-          );
-        });
+        }).select("_id");
 
         const adminIds = admins.map((admin) => admin._id);
 
@@ -496,11 +492,6 @@ const bookingController = {
             reason: cancellationReason,
             refundAmount,
           }
-        );
-        console.log(
-          "📤 Sending cancellation notification to",
-          adminIds.length,
-          "admins"
         );
         sendNotificationToUsers(adminIds, adminNotification);
       } catch (adminNotifError) {
@@ -679,6 +670,52 @@ const bookingController = {
       });
     } catch (error) {
       res.status(500).json({ message: "Server Error", error: error.message });
+    }
+  },
+
+  // Update booking (for payment method, status, etc.)
+  updateBooking: async (req, res) => {
+    try {
+      const { bookingId } = req.params;
+      const userId = req.user.id;
+      const { paymentMethod, paymentStatus, status } = req.body;
+
+      // Find booking and verify ownership
+      const booking = await Booking.findById(bookingId);
+
+      if (!booking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+
+      if (booking.user.toString() !== userId) {
+        return res.status(403).json({
+          message: "You are not authorized to update this booking",
+        });
+      }
+
+      // Update fields if provided
+      if (paymentMethod) booking.paymentMethod = paymentMethod;
+      if (paymentStatus) booking.paymentStatus = paymentStatus;
+      if (status) booking.status = status;
+
+      await booking.save();
+
+      // Populate booking details for response
+      const updatedBooking = await Booking.findById(bookingId)
+        .populate("hotel", "name city country")
+        .populate("room", "title roomType pricePerNight");
+
+      res.status(200).json({
+        success: true,
+        message: "Booking updated successfully",
+        booking: updatedBooking,
+      });
+    } catch (error) {
+      console.error("Error updating booking:", error);
+      res.status(500).json({
+        message: "Failed to update booking",
+        error: error.message,
+      });
     }
   },
 };

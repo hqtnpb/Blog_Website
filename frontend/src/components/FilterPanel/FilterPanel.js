@@ -201,24 +201,13 @@ function FilterPanel({ filters, onFiltersChange, onClearFilters }) {
                     <div className={cx("price-input-wrapper")}>
                       <label className={cx("price-label")}>Tối thiểu</label>
                       <div className={cx("price-input")}>
-                        <span>
-                          {new Intl.NumberFormat("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          }).format(priceRange[0])}
-                        </span>
+                        {formatVND(priceRange[0])} VND
                       </div>
                     </div>
                     <div className={cx("price-input-wrapper")}>
                       <label className={cx("price-label")}>Tối đa</label>
                       <div className={cx("price-input")}>
-                        <span>
-                          {new Intl.NumberFormat("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          }).format(priceRange[1])}
-                          +
-                        </span>
+                        {formatVND(priceRange[1])} VND
                       </div>
                     </div>
                   </div>
@@ -242,11 +231,10 @@ function FilterPanel({ filters, onFiltersChange, onClearFilters }) {
             {expandedSections.guestReview && (
               <div className={cx("section-content")}>
                 {[
-                  { value: "5.0", label: "5.0 Xuất sắc" },
-                  { value: "4.0+", label: "4.0+ Rất tốt" },
-                  { value: "3.0+", label: "3.0+ Tốt" },
-                  { value: "2.0+", label: "2.0+ Khá" },
-                  { value: "<2.0", label: "< 2.0 Kém" },
+                  { value: 9, label: "9+ Xuất sắc" },
+                  { value: 8, label: "8+ Rất tốt" },
+                  { value: 7, label: "7+ Tốt" },
+                  { value: 6, label: "6+ Khá" },
                 ].map((review) => (
                   <label
                     key={review.value}
@@ -301,16 +289,16 @@ function FilterPanel({ filters, onFiltersChange, onClearFilters }) {
                   { stars: 0, label: "Không xếp hạng" },
                 ].map((item) => (
                   <label
-                    key={item.label}
+                    key={item.stars}
                     className={cx("checkbox-item", "star-item")}
-                    onClick={() => toggleStar(item.label)}
+                    onClick={() => toggleStar(item.stars)}
                   >
                     <div
                       className={cx("checkbox", {
-                        checked: selectedStars.has(item.label),
+                        checked: selectedStars.has(item.stars),
                       })}
                     >
-                      {selectedStars.has(item.label) && (
+                      {selectedStars.has(item.stars) && (
                         <svg width="12" height="12" viewBox="0 0 12 12">
                           <path
                             d="M10 3L4.5 8.5 2 6"

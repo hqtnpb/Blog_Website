@@ -41,6 +41,15 @@ const roomSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    pricePerDay: {
+      type: Number,
+      default: 0,
+    },
+    bookingTypes: {
+      type: [String],
+      enum: ["night", "day", "both"],
+      default: ["night"],
+    },
     maxAdults: {
       type: Number,
       required: true,

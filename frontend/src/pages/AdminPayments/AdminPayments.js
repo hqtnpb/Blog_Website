@@ -57,7 +57,7 @@ function AdminPayments() {
       setPayments(historyData.payments);
       setTotalPages(historyData.totalPages);
     } catch (error) {
-      toast.error(error.message || "Failed to load payment data");
+      toast.error(error.message || "Không thể tải dữ liệu thanh toán");
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ function AdminPayments() {
 
       // Convert to CSV
       if (exportData.data.length === 0) {
-        toast.error("No data to export");
+        toast.error("Không có dữ liệu để xuất");
         return;
       }
 
@@ -109,9 +109,9 @@ function AdminPayments() {
       link.click();
       document.body.removeChild(link);
 
-      toast.success("Payment report exported successfully");
+      toast.success("Đã xuất báo cáo thanh toán thành công");
     } catch (error) {
-      toast.error(error.message || "Failed to export payments");
+      toast.error(error.message || "Không thể xuất báo cáo thanh toán");
     } finally {
       setExporting(false);
     }
@@ -119,15 +119,19 @@ function AdminPayments() {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      confirmed: { color: "#4caf50", icon: faCheckCircle, text: "Confirmed" },
-      pending: { color: "#ff9800", icon: faHourglassHalf, text: "Pending" },
+      confirmed: { color: "#4caf50", icon: faCheckCircle, text: "Đã xác nhận" },
+      pending: { color: "#ff9800", icon: faHourglassHalf, text: "Chờ xử lý" },
       processing: {
         color: "#2196f3",
         icon: faHourglassHalf,
-        text: "Processing",
+        text: "Đang xử lý",
       },
-      failed: { color: "#f44336", icon: faTimesCircle, text: "Failed" },
-      refunded: { color: "#9e9e9e", icon: faMoneyBillWave, text: "Refunded" },
+      failed: { color: "#f44336", icon: faTimesCircle, text: "Thất bại" },
+      refunded: {
+        color: "#9e9e9e",
+        icon: faMoneyBillWave,
+        text: "Đã hoàn tiền",
+      },
     };
 
     const config = statusMap[status] || statusMap.pending;
@@ -146,7 +150,7 @@ function AdminPayments() {
     const methodMap = {
       momo: { color: "#d82d8b", text: "MoMo" },
       vnpay: { color: "#0066cc", text: "VNPay" },
-      cash: { color: "#4caf50", text: "Cash" },
+      cash: { color: "#4caf50", text: "Tiền mặt" },
     };
 
     const config = methodMap[method] || {
@@ -202,7 +206,7 @@ function AdminPayments() {
       <div className={cx("header")}>
         <div className={cx("header-left")}>
           <FontAwesomeIcon icon={faCreditCard} className={cx("header-icon")} />
-          <h1 className={cx("title")}>Payment Tracking</h1>
+          <h1 className={cx("title")}>Theo dõi thanh toán</h1>
         </div>
         <button
           className={cx("export-btn")}
@@ -213,7 +217,7 @@ function AdminPayments() {
             icon={exporting ? faSpinner : faFileExport}
             spin={exporting}
           />
-          {exporting ? "Exporting..." : "Export Report"}
+          {exporting ? "Đang xuất..." : "Xuất báo cáo"}
         </button>
       </div>
 

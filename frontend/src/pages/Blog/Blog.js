@@ -23,13 +23,13 @@ function Blog() {
   const [trendingBlogs, setTrendingBlogs] = useState(null);
   const [remainingTrendingBlogs, setRemainingTrendingBlogs] = useState([]);
   const [buttonIndex, setButtonIndex] = useState(0);
-  const [pageState, setPageState] = useState("all articles");
+  const [pageState, setPageState] = useState("Tất cả bài viết");
   const categories = [
-    "All Articles",
-    "Food & Drink",
-    "Inspiration",
-    "Local Guides",
-    "Travel Tips",
+    "Tất cả bài viết",
+    "Ẩm thực",
+    "Cảm hứng",
+    "Hướng dẫn",
+    "Mẹo du lịch",
   ];
 
   let navigate = useNavigate();
@@ -76,12 +76,12 @@ function Blog() {
       });
   };
   const loadBlogByCategory = (e) => {
-    let category = e.target.innerText.toLowerCase();
+    let category = e.target.innerText;
 
     setBlogs(null);
 
-    if (pageState === category) {
-      setPageState("all articles");
+    if (pageState.toLowerCase() === category.toLowerCase()) {
+      setPageState("Tất cả bài viết");
       return;
     }
     setPageState(category);
@@ -109,7 +109,7 @@ function Blog() {
       });
   };
   useEffect(() => {
-    if (pageState === "all articles") {
+    if (pageState.toLowerCase() === "tất cả bài viết") {
       fetchLatestBlogs({ page: 1 });
       fetchTrendingBlogs();
     } else {
@@ -145,9 +145,9 @@ function Blog() {
               className={cx("background-img")}
             />
             <div className={cx("content")}>
-              <h1 className={cx("title")}>Inside get your guide</h1>
+              <h1 className={cx("title")}>Khám phá câu chuyện du lịch</h1>
               <p className={cx("desc")}>
-                We have more than 1000+ articles you can read
+                Chúng tôi có hơn 1000+ bài viết bạn có thể đọc
               </p>
               <div className={cx("search")}>
                 <FontAwesomeIcon
@@ -216,20 +216,20 @@ function Blog() {
             })
           ) : (
             <NoDataMessage
-              message={"Sorry!! No blog published hẹ hẹ hẹ "}
+              message={"Xin lỗi, không tìm thấy bài viết nào."}
             ></NoDataMessage>
           )}
           <LoadMoreButton
             state={blogs}
             fetchDataFunc={
-              pageState === "all articles"
+              pageState === "tất cả bài viết"
                 ? fetchLatestBlogs
                 : fetchBlogByCategory
             }
           ></LoadMoreButton>
         </section>
 
-        {pageState === "all articles" && currentPosts && (
+        {pageState === "tất cả bài viết" && currentPosts && (
           <section className={cx("blog-card")}>
             <div className={cx("inner")}>
               <div className={cx("container")}>

@@ -86,6 +86,15 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // Booking Type for hotel reservations
+    bookingType: {
+      type: String,
+      enum: ["night", "day", "both"],
+      default: "night",
+      required: function () {
+        return this.type === "hotel";
+      },
+    },
     // Payment Information
     paymentStatus: {
       type: String,
