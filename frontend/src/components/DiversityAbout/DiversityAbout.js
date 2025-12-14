@@ -28,15 +28,15 @@ function DiversityAbout() {
             />
           </div>
           <div className={cx("content")}>
-            <h2 className={cx("title")}>Diversity Vision Statement</h2>
+            <h2 className={cx("title")}>Tầm nhìn về sự đa dạng</h2>
             <p className={cx("desc")}>
-              Pathway is committed to improving diversity and inclusion within
-              our workplace as we forge our path forward to create real, lasting
-              change within our company.<br></br>
+              Chúng tôi cam kết cải thiện sự đa dạng và hòa nhập trong môi
+              trường làm việc của mình khi chúng tôi tiếp tục tiến lên để tạo ra
+              những thay đổi thực sự và lâu dài trong công ty.<br></br>
               <br></br>
-              As a global leader in the travel industry, we also have the
-              opportunity to help bring about change to the sector; we are
-              committed to doing just that.
+              Với tư cách là nhà lãnh đạo toàn cầu trong ngành du lịch, chúng
+              tôi cũng có cơ hội giúp mang lại sự thay đổi cho ngành; chúng tôi
+              cam kết làm điều đó.
             </p>
           </div>
         </div>

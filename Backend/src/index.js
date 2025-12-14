@@ -19,6 +19,7 @@ const reviewRoute = require("./routes/review");
 const dashboardRoute = require("./routes/dashboard");
 const paymentRoute = require("./routes/payment");
 const searchRoute = require("./routes/search");
+const adminRoute = require("./routes/admin");
 const jwt = require("jsonwebtoken");
 const verifyJWT = require("./middleWare/authMiddleWare");
 dotenv.config();
@@ -79,6 +80,9 @@ app.use("/api/payment", paymentRoute);
 
 app.use("/api", searchRoute);
 console.log("✅ Search routes mounted at /api");
+
+app.use("/api/admin", adminRoute);
+console.log("✅ Admin routes mounted at /api/admin");
 
 // Socket.IO for real-time notifications
 const connectedUsers = new Map(); // userId -> socketId

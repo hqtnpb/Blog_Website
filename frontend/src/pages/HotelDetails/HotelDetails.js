@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -37,7 +37,14 @@ const getAmenityIcon = (iconType) => {
         />
       </svg>
     ),
-    parking: <span style={{ fontSize: "18px" }}>🅿️</span>,
+    parking: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M13 3H6V21H10V16H13C16.31 16 19 13.31 19 10C19 6.69 16.31 3 13 3ZM13.2 12H10V7H13.2C14.3 7 15.2 7.9 15.2 9C15.2 10.1 14.3 12 13.2 12Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
     gym: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path
@@ -46,7 +53,14 @@ const getAmenityIcon = (iconType) => {
         />
       </svg>
     ),
-    restaurant: <span style={{ fontSize: "18px" }}>🍽️</span>,
+    restaurant: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M11 9H9V2H7V9H5V2H3V9C3 11.12 4.66 12.84 6.75 12.97V22H9.25V12.97C11.34 12.84 13 11.12 13 9V2H11V9ZM16 6V14H18.5V22H21V2C18.24 2 16 4.24 16 7V6Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
     bar: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path
@@ -55,12 +69,54 @@ const getAmenityIcon = (iconType) => {
         />
       </svg>
     ),
-    ac: <span style={{ fontSize: "18px" }}>❄️</span>,
-    "room-service": <span style={{ fontSize: "18px" }}>🛎️</span>,
-    "24h": <span style={{ fontSize: "18px" }}>🕐</span>,
-    shuttle: <span style={{ fontSize: "18px" }}>🚐</span>,
-    beach: <span style={{ fontSize: "18px" }}>🏖️</span>,
-    breakfast: <span style={{ fontSize: "18px" }}>🍳</span>,
+    ac: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M22 11H20.32C19.52 9.21 17.89 7.87 15.93 7.41L16.53 5.62L14.62 5L13.87 7.27C13.26 7.16 12.64 7.11 12 7.11C11.36 7.11 10.74 7.16 10.13 7.27L9.38 5L7.47 5.62L8.07 7.41C6.11 7.87 4.48 9.21 3.68 11H2V13H3.05C3.02 13.33 3 13.66 3 14H2V16H3C3 16.34 3.02 16.67 3.05 17H2V19H3.68C5.25 22.19 9.03 23.88 12.22 22.31C14.03 21.41 15.41 19.65 15.93 17.58L14.62 19L16.53 19.62L15.93 17.59C17.89 17.13 19.52 15.79 20.32 14H22V11ZM12 19.89C9.03 19.89 6.61 17.47 6.61 14.5C6.61 11.53 9.03 9.11 12 9.11C14.97 9.11 17.39 11.53 17.39 14.5C17.39 17.47 14.97 19.89 12 19.89Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
+    "room-service": (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M2 17H22V21H2V17ZM13.84 7.79C13.96 7.94 14 8.13 14 8.34V15H2V8.34C2 8.13 2.04 7.94 2.16 7.79L6.16 3.79C6.41 3.54 6.78 3.5 7.08 3.64C7.38 3.79 7.58 4.08 7.58 4.41V11H8.42V4.41C8.42 4.08 8.62 3.79 8.92 3.64C9.22 3.5 9.59 3.54 9.84 3.79L13.84 7.79ZM18 2V15H16V2H18Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
+    "24h": (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
+    shuttle: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M17 5H3C1.9 5 1 5.9 1 7V15C1 16.1 1.9 17 3 17H4C4 18.66 5.34 20 7 20C8.66 20 10 18.66 10 17H14C14 18.66 15.34 20 17 20C18.66 20 20 18.66 20 17H21C22.1 17 23 16.1 23 15V12L20 8H17V5ZM7 18.5C6.17 18.5 5.5 17.83 5.5 17C5.5 16.17 6.17 15.5 7 15.5C7.83 15.5 8.5 16.17 8.5 17C8.5 17.83 7.83 18.5 7 18.5ZM17 9.5H19.5L21.46 12H17V9.5ZM17 18.5C16.17 18.5 15.5 17.83 15.5 17C15.5 16.17 16.17 15.5 17 15.5C17.83 15.5 18.5 16.17 18.5 17C18.5 17.83 17.83 18.5 17 18.5Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
+    beach: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M13.127 14.56L10 20.424L6.873 14.56C6.01 14.206 5.24 13.672 4.625 13C3.26 11.408 2.5 9.343 2.5 7.169C2.5 4.935 3.5 3 5.5 3C7.5 3 8.5 4.935 8.5 7.169C8.5 7.4 8.489 7.628 8.467 7.854L10 11.577L11.533 7.854C11.511 7.628 11.5 7.4 11.5 7.169C11.5 4.935 12.5 3 14.5 3C16.5 3 17.5 4.935 17.5 7.169C17.5 9.343 16.74 11.408 15.375 13C14.76 13.672 13.99 14.206 13.127 14.56ZM1 22H19V20H1V22Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
+    breakfast: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M20 3H4V13C4 14.1 4.9 15 6 15H18C19.1 15 20 14.1 20 13V3ZM19 13C19 13.55 18.55 14 18 14H6C5.45 14 5 13.55 5 13V5H19V13ZM18 19V17H2V19C2 20.1 2.9 21 4 21H18C19.1 21 20 20.1 20 19V17H18V19Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
     spa: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path
@@ -83,6 +139,7 @@ function HotelDetails() {
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedRoomType, setSelectedRoomType] = useState("all");
+  const [priceFilter, setPriceFilter] = useState({ min: 0, max: Infinity });
   const [activeTab, setActiveTab] = useState("overview");
   const [bookingDates, setBookingDates] = useState({
     checkIn: new Date().toISOString().split("T")[0],
@@ -91,6 +148,10 @@ function HotelDetails() {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [hasBooking, setHasBooking] = useState(false);
   const [userBookingId, setUserBookingId] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const handleReserveRoom = (roomId) => {
     try {
@@ -106,8 +167,34 @@ function HotelDetails() {
   useEffect(() => {
     fetchHotelDetails();
     checkUserBooking();
+    fetchReviews();
+
+    // Get current user ID from sessionStorage
+    const userDataStr = sessionStorage.getItem("user");
+    if (userDataStr) {
+      try {
+        const userData = JSON.parse(userDataStr);
+        const userId = userData._id || userData.id;
+        if (userId) {
+          setCurrentUserId(userId);
+          console.log("Current user ID:", userId);
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hotel_id]);
+
+  // Initialize price filter when hotel data loads
+  useEffect(() => {
+    if (hotel?.rooms && hotel.rooms.length > 0) {
+      const prices = hotel.rooms.map((r) => r.pricePerNight || 0);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      setPriceFilter({ min: minPrice, max: maxPrice });
+    }
+  }, [hotel]);
 
   const fetchHotelDetails = async () => {
     const apiUrl =
@@ -173,9 +260,79 @@ function HotelDetails() {
     }
   };
 
+  const fetchReviews = async () => {
+    const apiUrl =
+      process.env.REACT_APP_SERVER_DOMAIN || "http://localhost:8000/api";
+
+    try {
+      setReviewsLoading(true);
+      const response = await axios.get(`${apiUrl}/reviews/hotel/${hotel_id}`);
+      setReviews(response.data);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      setReviews([]);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
   const handleReviewSuccess = () => {
-    // Refresh hotel data to show new review
+    // Refresh hotel data and reviews to show new review
     fetchHotelDetails();
+    fetchReviews();
+    setShowReviewModal(false);
+  };
+
+  const handleEditReview = (review) => {
+    console.log("Editing review:", review);
+    setEditingReview(review);
+    setShowReviewModal(true);
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) {
+      return;
+    }
+
+    console.log("Deleting review ID:", reviewId);
+
+    const apiUrl =
+      process.env.REACT_APP_SERVER_DOMAIN || "http://localhost:8000/api";
+
+    try {
+      const userDataStr = sessionStorage.getItem("user");
+      const userData = userDataStr ? JSON.parse(userDataStr) : null;
+      const token = userData?.accessToken;
+
+      if (!token) {
+        toast.error("Vui lòng đăng nhập để xóa đánh giá");
+        return;
+      }
+
+      console.log(
+        "Sending DELETE request to:",
+        `${apiUrl}/reviews/${reviewId}`
+      );
+
+      const response = await axios.delete(`${apiUrl}/reviews/${reviewId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Delete response:", response.data);
+      toast.success("Đánh giá đã được xóa thành công!");
+      handleReviewSuccess();
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      console.error("Error response:", error.response?.data);
+      toast.error(error.response?.data?.message || "Không thể xóa đánh giá");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowReviewModal(false);
+    setEditingReview(null);
   };
 
   if (loading) {
@@ -322,7 +479,7 @@ function HotelDetails() {
                   className={cx("btn-review")}
                   onClick={() => setShowReviewModal(true)}
                 >
-                  <span>✍️</span>
+                  <span>✏️</span>
                   <span>Viết đánh giá</span>
                 </button>
               )}
@@ -407,67 +564,78 @@ function HotelDetails() {
                     height="600"
                   />
                 ) : (
-                  <div className={cx("gallery-placeholder")}>Không có ảnh</div>
+                  <img
+                    src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800"
+                    alt={hotel.name}
+                    className={cx("gallery-img")}
+                    loading="eager"
+                    width="800"
+                    height="600"
+                  />
                 )}
               </div>
               <div className={cx("gallery-thumbnails")}>
                 <div className={cx("thumbnails-row")}>
-                  {[1, 2].map((index) => (
-                    <div key={index} className={cx("thumbnail-item")}>
-                      {hotel.images && hotel.images[index] ? (
+                  {[1, 2].map((index) => {
+                    const fallbackImages = [
+                      "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800",
+                      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800",
+                    ];
+                    return (
+                      <div key={index} className={cx("thumbnail-item")}>
                         <img
-                          src={hotel.images[index]}
+                          src={
+                            hotel.images?.[index] || fallbackImages[index - 1]
+                          }
                           alt={`${hotel.name} ${index + 1}`}
                           className={cx("gallery-img")}
                           loading="lazy"
                           width="390"
                           height="290"
                         />
-                      ) : (
-                        <div className={cx("gallery-placeholder")}>
-                          Không có ảnh
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    );
+                  })}
                 </div>
                 <div className={cx("thumbnails-row")}>
-                  {[3, 4].map((index) => (
-                    <div
-                      key={index}
-                      className={cx("thumbnail-item", {
-                        "has-overlay": index === 4,
-                      })}
-                    >
-                      {hotel.images && hotel.images[index] ? (
+                  {[3, 4].map((index) => {
+                    const fallbackImages = [
+                      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800",
+                      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800",
+                    ];
+                    return (
+                      <div
+                        key={index}
+                        className={cx("thumbnail-item", {
+                          "has-overlay": index === 4,
+                        })}
+                      >
                         <img
-                          src={hotel.images[index]}
+                          src={
+                            hotel.images?.[index] || fallbackImages[index - 3]
+                          }
                           alt={`${hotel.name} ${index + 1}`}
                           className={cx("gallery-img")}
                           loading="lazy"
                           width="390"
                           height="290"
                         />
-                      ) : (
-                        <div className={cx("gallery-placeholder")}>
-                          Không có ảnh
-                        </div>
-                      )}
-                      {index === 4 &&
-                        hotel.images &&
-                        hotel.images.length > 5 && (
-                          <button
-                            className={cx("more-photos-btn")}
-                            onClick={() => setShowAllPhotos(true)}
-                          >
-                            <span className={cx("icon")}>🖼️</span>
-                            <span className={cx("text")}>
-                              {hotel.images.length - 5}+
-                            </span>
-                          </button>
-                        )}
-                    </div>
-                  ))}
+                        {index === 4 &&
+                          hotel.images &&
+                          hotel.images.length > 5 && (
+                            <button
+                              className={cx("more-photos-btn")}
+                              onClick={() => setShowAllPhotos(true)}
+                            >
+                              <span className={cx("icon")}>📷</span>
+                              <span className={cx("text")}>
+                                {hotel.images.length - 5}+
+                              </span>
+                            </button>
+                          )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -587,22 +755,191 @@ function HotelDetails() {
                   )}
 
                   {/* Reviews Section */}
-                  <section className={cx("reviews-section")}>
-                    <h2 className={cx("section-title")}>Đánh giá</h2>
-                    <div className={cx("reviews-placeholder")}>
-                      <p>
-                        ⭐ {hotel.rating?.toFixed(1) || "N/A"} (
-                        {hotel.reviewCount || 0} đánh giá)
-                      </p>
-                      <span className={cx("reviews-coming-soon")}>
-                        Chi tiết đánh giá sắp cập nhật
-                      </span>
+                  <section className={cx("reviews-section")} id="reviews">
+                    <div className={cx("reviews-header")}>
+                      <h2 className={cx("section-title")}>Đánh giá</h2>
+                      {hasBooking && (
+                        <button
+                          className={cx("btn-write-review")}
+                          onClick={() => setShowReviewModal(true)}
+                        >
+                          ✏️ Viết đánh giá
+                        </button>
+                      )}
                     </div>
+
+                    {reviewsLoading ? (
+                      <div className={cx("reviews-loading")}>
+                        <div className={cx("spinner")} />
+                        <p>Đang tải đánh giá...</p>
+                      </div>
+                    ) : reviews.length === 0 ? (
+                      <div className={cx("reviews-empty")}>
+                        <p>Chưa có đánh giá nào cho khách sạn này.</p>
+                        {hasBooking && (
+                          <button
+                            className={cx("btn-write-review")}
+                            onClick={() => setShowReviewModal(true)}
+                          >
+                            ✏️ Viết đánh giá đầu tiên
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        {hotel.rating && (
+                          <div className={cx("rating-summary")}>
+                            <div className={cx("rating-score")}>
+                              <span className={cx("score")}>
+                                {hotel.rating.toFixed(1)}
+                              </span>
+                              <span className={cx("stars")}>
+                                {"⭐".repeat(Math.round(hotel.rating))}
+                              </span>
+                            </div>
+                            <p className={cx("total-reviews")}>
+                              Dựa trên {reviews.length} đánh giá
+                            </p>
+                          </div>
+                        )}
+                        <div className={cx("reviews-list")}>
+                          {reviews.map((review) => {
+                            const reviewUserId =
+                              review.user?._id || review.user?.id;
+                            const isOwner =
+                              currentUserId &&
+                              reviewUserId &&
+                              (reviewUserId === currentUserId ||
+                                reviewUserId.toString() ===
+                                  currentUserId.toString());
+
+                            // Debug logging
+                            if (review._id && currentUserId) {
+                              console.log("Review debug:", {
+                                reviewId: review._id,
+                                reviewUserId,
+                                currentUserId,
+                                isOwner,
+                              });
+                            }
+
+                            return (
+                              <div
+                                key={review._id}
+                                className={cx("review-card", {
+                                  "is-owner": isOwner,
+                                })}
+                              >
+                                <div className={cx("review-header")}>
+                                  <div className={cx("reviewer-info")}>
+                                    <div className={cx("avatar-wrapper")}>
+                                      <img
+                                        src={
+                                          review.user?.personal_info
+                                            ?.profile_img ||
+                                          "https://via.placeholder.com/48"
+                                        }
+                                        alt={
+                                          review.user?.personal_info?.username
+                                        }
+                                        className={cx("reviewer-avatar")}
+                                      />
+                                      <span
+                                        className={cx("verified-badge")}
+                                        title="Khách hàng đã đặt phòng"
+                                      >
+                                        ✔️
+                                      </span>
+                                    </div>
+                                    <div className={cx("reviewer-details")}>
+                                      <h4 className={cx("reviewer-name")}>
+                                        {review.user?.personal_info?.username ||
+                                          "Ẩn danh"}
+                                        {isOwner && (
+                                          <span className={cx("owner-badge")}>
+                                            Bạn
+                                          </span>
+                                        )}
+                                      </h4>
+                                      <div className={cx("review-meta")}>
+                                        <span className={cx("review-date")}>
+                                          📅{" "}
+                                          {new Date(
+                                            review.createdAt
+                                          ).toLocaleDateString("vi-VN", {
+                                            day: "2-digit",
+                                            month: "long",
+                                            year: "numeric",
+                                          })}
+                                        </span>
+                                        {review.updatedAt &&
+                                          review.updatedAt !==
+                                            review.createdAt && (
+                                            <span
+                                              className={cx("review-edited")}
+                                            >
+                                              ✏️ Đã chỉnh sửa
+                                            </span>
+                                          )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className={cx("review-rating")}>
+                                    <span className={cx("rating-value")}>
+                                      {review.rating.toFixed(1)}
+                                    </span>
+                                    <span className={cx("rating-star")}>
+                                      ⭐
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {isOwner && (
+                                  <div className={cx("review-actions")}>
+                                    <button
+                                      className={cx("btn-action", "btn-edit")}
+                                      onClick={() => handleEditReview(review)}
+                                      title="Sửa đánh giá"
+                                    >
+                                      ✏️
+                                    </button>
+                                    <button
+                                      className={cx("btn-action", "btn-delete")}
+                                      onClick={() =>
+                                        handleDeleteReview(review._id)
+                                      }
+                                      title="Xóa đánh giá"
+                                    >
+                                      🗑️
+                                    </button>
+                                  </div>
+                                )}
+
+                                <div className={cx("review-body")}>
+                                  <p className={cx("review-comment")}>
+                                    <span className={cx("quote-icon")}>“</span>
+                                    {review.comment}
+                                    <span className={cx("quote-icon")}>”</span>
+                                  </p>
+                                </div>
+
+                                {review.partnerReply && (
+                                  <div className={cx("partner-reply")}>
+                                    <strong>🏨 Phản hồi từ khách sạn:</strong>
+                                    <p>{review.partnerReply}</p>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
                   </section>
 
                   {/* Rooms Section */}
                   {hotel.rooms && hotel.rooms.length > 0 && (
-                    <section className={cx("rooms-section")}>
+                    <section className={cx("rooms-section")} id="rooms">
                       <h2 className={cx("section-title")}>Phòng</h2>
 
                       {/* Room Type Filters */}
@@ -624,27 +961,28 @@ function HotelDetails() {
                       {/* Room Cards */}
                       <div className={cx("rooms-list")}>
                         {hotel.rooms
-                          .filter(
-                            (room) =>
+                          .filter((room) => {
+                            const matchesType =
                               selectedRoomType === "all" ||
-                              room.roomType === selectedRoomType
-                          )
+                              room.roomType === selectedRoomType;
+                            const matchesPrice =
+                              room.pricePerNight >= priceFilter.min &&
+                              room.pricePerNight <= priceFilter.max;
+                            return matchesType && matchesPrice;
+                          })
                           .map((room, index) => (
                             <div
                               key={room._id || index}
                               className={cx("room-card")}
                             >
                               <div className={cx("room-card__image")}>
-                                {room.images && room.images[0] ? (
-                                  <img
-                                    src={room.images[0]}
-                                    alt={room.title || "Room"}
-                                  />
-                                ) : (
-                                  <div className={cx("room-placeholder")}>
-                                    Không có ảnh
-                                  </div>
-                                )}
+                                <img
+                                  src={
+                                    room.images?.[0] ||
+                                    "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800"
+                                  }
+                                  alt={room.title}
+                                />
                               </div>
                               <div className={cx("room-card__content")}>
                                 <h3 className={cx("room-card__title")}>
@@ -804,19 +1142,16 @@ function HotelDetails() {
                             className={cx("room-card")}
                           >
                             <div className={cx("room-card__image")}>
-                              {room.images && room.images[0] ? (
-                                <img
-                                  src={room.images[0]}
-                                  alt={room.title || "Room"}
-                                  loading="lazy"
-                                  width="300"
-                                  height="200"
-                                />
-                              ) : (
-                                <div className={cx("room-placeholder")}>
-                                  Không có ảnh
-                                </div>
-                              )}
+                              <img
+                                src={
+                                  room.images?.[0] ||
+                                  "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800"
+                                }
+                                alt={room.title || "Room"}
+                                loading="lazy"
+                                width="300"
+                                height="200"
+                              />
                             </div>
                             <div className={cx("room-card__content")}>
                               <h3 className={cx("room-card__title")}>
@@ -861,16 +1196,143 @@ function HotelDetails() {
               {/* Reviews Tab */}
               {activeTab === "reviews" && (
                 <section className={cx("reviews-section")}>
-                  <h2 className={cx("section-title")}>Đánh giá</h2>
-                  <div className={cx("reviews-placeholder")}>
-                    <p>
-                      ⭐ {hotel.rating?.toFixed(1) || "N/A"} (
-                      {hotel.reviewCount || 0} đánh giá)
-                    </p>
-                    <span className={cx("reviews-coming-soon")}>
-                      Chi tiết đánh giá sắp cập nhật
-                    </span>
+                  <div className={cx("reviews-header")}>
+                    <h2 className={cx("section-title")}>Đánh giá</h2>
+                    {hasBooking && (
+                      <button
+                        className={cx("btn-write-review")}
+                        onClick={() => setShowReviewModal(true)}
+                      >
+                        ✏️ Viết đánh giá
+                      </button>
+                    )}
                   </div>
+
+                  {reviewsLoading ? (
+                    <div className={cx("reviews-loading")}>
+                      <div className={cx("spinner")} />
+                      <p>Đang tải đánh giá...</p>
+                    </div>
+                  ) : reviews.length === 0 ? (
+                    <div className={cx("reviews-empty")}>
+                      <p>Chưa có đánh giá nào cho khách sạn này.</p>
+                      {hasBooking && (
+                        <button
+                          className={cx("btn-write-review")}
+                          onClick={() => setShowReviewModal(true)}
+                        >
+                          ✏️ Viết đánh giá đầu tiên
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      {hotel.rating && (
+                        <div className={cx("rating-summary")}>
+                          <div className={cx("rating-score")}>
+                            <span className={cx("score")}>
+                              {hotel.rating.toFixed(1)}
+                            </span>
+                            <span className={cx("stars")}>⭐⭐⭐⭐⭐</span>
+                          </div>
+                          <p className={cx("total-reviews")}>
+                            Dựa trên {reviews.length} đánh giá
+                          </p>
+                        </div>
+                      )}
+                      <div className={cx("reviews-list")}>
+                        {reviews.map((review) => {
+                          const reviewUserId =
+                            review.user?._id || review.user?.id;
+                          const isOwner =
+                            currentUserId &&
+                            reviewUserId &&
+                            (reviewUserId === currentUserId ||
+                              reviewUserId.toString() ===
+                                currentUserId.toString());
+
+                          return (
+                            <div key={review._id} className={cx("review-card")}>
+                              <div className={cx("review-header")}>
+                                <div className={cx("reviewer-info")}>
+                                  <img
+                                    src={
+                                      review.user?.personal_info?.profile_img ||
+                                      "https://via.placeholder.com/48"
+                                    }
+                                    alt={review.user?.personal_info?.username}
+                                    className={cx("reviewer-avatar")}
+                                  />
+                                  <div>
+                                    <h4 className={cx("reviewer-name")}>
+                                      {review.user?.personal_info?.username ||
+                                        "Ẩn danh"}
+                                      {isOwner && (
+                                        <span className={cx("owner-badge")}>
+                                          (Bạn)
+                                        </span>
+                                      )}
+                                    </h4>
+                                    <p className={cx("review-date")}>
+                                      {new Date(
+                                        review.createdAt
+                                      ).toLocaleDateString("vi-VN", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                      })}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className={cx("review-actions-wrapper")}>
+                                  <div className={cx("review-rating")}>
+                                    <span className={cx("rating-value")}>
+                                      {review.rating.toFixed(1)}
+                                    </span>
+                                    <span className={cx("rating-star")}>
+                                      ⭐
+                                    </span>
+                                  </div>
+                                  {isOwner && (
+                                    <div className={cx("review-actions")}>
+                                      <button
+                                        className={cx("btn-action", "btn-edit")}
+                                        onClick={() => handleEditReview(review)}
+                                        title="Chỉnh sửa"
+                                      >
+                                        ✏️
+                                      </button>
+                                      <button
+                                        className={cx(
+                                          "btn-action",
+                                          "btn-delete"
+                                        )}
+                                        onClick={() =>
+                                          handleDeleteReview(review._id)
+                                        }
+                                        title="Xóa"
+                                      >
+                                        🗑️
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <p className={cx("review-comment")}>
+                                {review.comment}
+                              </p>
+                              {review.partnerReply && (
+                                <div className={cx("partner-reply")}>
+                                  <strong>🏨 Phản hồi từ khách sạn:</strong>
+                                  <p>{review.partnerReply}</p>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </section>
               )}
             </div>
@@ -878,19 +1340,63 @@ function HotelDetails() {
             {/* Sticky Booking Card */}
             <div className={cx("content-right")}>
               <div className={cx("sticky-booking")}>
-                <BookingCard hotel={hotel} priceRange={priceRange} />
+                <BookingCard
+                  hotel={hotel}
+                  priceRange={priceRange}
+                  onPriceFilterChange={setPriceFilter}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Photo Gallery Modal */}
+      {showAllPhotos && (
+        <div
+          className={cx("photo-modal-overlay")}
+          onClick={() => setShowAllPhotos(false)}
+        >
+          <div
+            className={cx("photo-modal-content")}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={cx("modal-close-btn")}
+              onClick={() => setShowAllPhotos(false)}
+            >
+              ✕
+            </button>
+            <h2 className={cx("modal-title")}>
+              {hotel.name} - Tất cả hình ảnh
+            </h2>
+            <div className={cx("photo-grid")}>
+              {hotel.images && hotel.images.length > 0 ? (
+                hotel.images.map((image, index) => (
+                  <div key={index} className={cx("photo-item")}>
+                    <img
+                      src={image}
+                      alt={`${hotel.name} ${index + 1}`}
+                      className={cx("photo-img")}
+                    />
+                  </div>
+                ))
+              ) : (
+                <p>Không có hình ảnh</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Review Modal */}
-      {showReviewModal && userBookingId && (
+      {showReviewModal && (
         <ReviewModal
           bookingId={userBookingId}
-          onClose={() => setShowReviewModal(false)}
+          onClose={handleCloseModal}
           onSuccess={handleReviewSuccess}
+          initialData={editingReview}
+          isEdit={!!editingReview}
         />
       )}
     </div>

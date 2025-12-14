@@ -3,6 +3,7 @@ import { lazy } from "react";
 //Layout
 import { HeaderOnly } from "~/components/Layout";
 import { AdminLayout } from "~/components/Layout";
+import { SystemAdminLayout } from "~/components/Layout";
 
 // Critical pages - loaded immediately
 import Home from "~/pages/Home";
@@ -44,6 +45,12 @@ const AdminCalendar = lazy(() => import("~/pages/AdminCalendar"));
 const AdminNotifications = lazy(() => import("~/pages/AdminNotifications"));
 const AdminPayments = lazy(() => import("~/pages/AdminPayments"));
 const AdminReports = lazy(() => import("~/pages/AdminReports"));
+const SystemAdminDashboard = lazy(() => import("~/pages/SystemAdminDashboard"));
+const SystemAdminUsers = lazy(() => import("~/pages/SystemAdminUsers"));
+const SystemAdminPartners = lazy(() => import("~/pages/SystemAdminPartners"));
+const SystemAdminBlogs = lazy(() =>
+  import("~/pages/SystemAdminBlogs/SystemAdminBlogs")
+);
 const BookingPage = lazy(() => import("~/pages/BookingPage"));
 const PaymentPage = lazy(() => import("~/pages/PaymentPage"));
 const RoomDetails = lazy(() => import("~/pages/RoomDetails"));
@@ -52,6 +59,7 @@ const BookingResult = lazy(() => import("~/pages/BookingResult"));
 
 //public routes
 const publicRoutes = [
+  { path: "/hotels", component: HotelPage, layout: HeaderOnly },
   { path: "/", component: Home },
   {
     path: "/settings",
@@ -104,7 +112,6 @@ const publicRoutes = [
   { path: "/user/:id", component: ProfilePage, layout: HeaderOnly },
   { path: "/search/:query", component: SearchPage },
   { path: "/blog/:blog_id", component: BlogDetails },
-  { path: "/hotels", component: HotelPage, layout: HeaderOnly },
   { path: "/hotels/:hotel_id", component: HotelDetails, layout: HeaderOnly },
   {
     path: "/room/:hotel_id/:room_id",
@@ -134,6 +141,47 @@ const publicRoutes = [
   },
   { path: "/admin/payments", component: AdminPayments, layout: AdminLayout },
   { path: "/admin/reports", component: AdminReports, layout: AdminLayout },
+  // System Admin Routes
+  {
+    path: "/system-admin/dashboard",
+    component: SystemAdminDashboard,
+    layout: SystemAdminLayout,
+  },
+  {
+    path: "/system-admin/users",
+    component: SystemAdminUsers,
+    layout: SystemAdminLayout,
+  },
+  {
+    path: "/system-admin/partners",
+    component: SystemAdminPartners,
+    layout: SystemAdminLayout,
+  },
+  {
+    path: "/system-admin/blogs",
+    component: SystemAdminBlogs,
+    layout: SystemAdminLayout,
+  },
+  {
+    path: "/system-admin/hotels",
+    component: AdminHotels,
+    layout: SystemAdminLayout,
+  },
+  {
+    path: "/system-admin/bookings",
+    component: AdminBookings,
+    layout: SystemAdminLayout,
+  },
+  {
+    path: "/system-admin/payments",
+    component: AdminPayments,
+    layout: SystemAdminLayout,
+  },
+  {
+    path: "/system-admin/settings",
+    component: AdminSettings,
+    layout: SystemAdminLayout,
+  },
   { path: "*", component: Error, layout: null },
 ];
 

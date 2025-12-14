@@ -56,7 +56,7 @@ const renderBlogsController = {
     let findQuery;
     if (tag) {
       findQuery = {
-        tags: tag,
+        tags: { $regex: new RegExp(`^${tag}$`, "i") },
         draft: false,
         blog_id: { $ne: eliminate_blog },
       };
@@ -114,7 +114,7 @@ const renderBlogsController = {
     let findQuery;
     if (tag) {
       findQuery = {
-        tags: tag,
+        tags: { $regex: new RegExp(`^${tag}$`, "i") },
         draft: false,
       };
     } else if (query) {

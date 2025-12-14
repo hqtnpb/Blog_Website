@@ -21,29 +21,14 @@ const sendNotificationToUser = (userId, notification) => {
     const userIdStr = userId.toString();
     const socketId = connectedUsers.get(userIdStr);
 
-    console.log(`📤 Attempting to send notification to user ${userIdStr}`);
-    console.log(`🔍 Looking for socket ID for user ${userIdStr}`);
-    console.log(`🗺️ All connected users:`, Array.from(connectedUsers.keys()));
-    console.log(`🔌 Found socket ID:`, socketId || "NOT FOUND");
-
     if (socketId) {
       io.to(socketId).emit("notification", {
         ...notification,
         timestamp: new Date(),
         read: false,
       });
-      console.log(
-        `✅ Notification sent to user ${userIdStr} via socket ${socketId}`
-      );
-      console.log(`📬 Notification type:`, notification.type);
-      console.log(`📬 Notification title:`, notification.title);
       return true;
     } else {
-      console.log(`⚠️ User ${userIdStr} not connected to socket`);
-      console.log(
-        `⚠️ Available users:`,
-        Array.from(connectedUsers.keys()).join(", ")
-      );
       return false;
     }
   } catch (error) {
@@ -63,26 +48,14 @@ const sendNotificationToUsers = (userIds, notification) => {
     const connectedUsers = global.connectedUsers;
 
     if (!io || !connectedUsers) {
-      console.warn("⚠️ Socket.IO not initialized");
       return 0;
     }
-
-    console.log(
-      `📤 Attempting to send notification to ${userIds.length} users`
-    );
-    console.log(
-      "🔌 Connected users in map:",
-      Array.from(connectedUsers.keys())
-    );
 
     let sentCount = 0;
 
     userIds.forEach((userId) => {
       const userIdStr = userId.toString();
       const socketId = connectedUsers.get(userIdStr);
-      console.log(
-        `  - User ${userIdStr}: ${socketId ? `✅ Connected (${socketId})` : "❌ Not connected"}`
-      );
 
       if (socketId) {
         io.to(socketId).emit("notification", {
@@ -93,8 +66,6 @@ const sendNotificationToUsers = (userIds, notification) => {
         sentCount++;
       }
     });
-
-    console.log(`✅ Notification sent to ${sentCount}/${userIds.length} users`);
     return sentCount;
   } catch (error) {
     console.error("❌ Error sending notifications:", error);
@@ -111,7 +82,6 @@ const broadcastNotification = (notification) => {
     const io = global.io;
 
     if (!io) {
-      console.warn("⚠️ Socket.IO not initialized");
       return false;
     }
 
@@ -120,8 +90,6 @@ const broadcastNotification = (notification) => {
       timestamp: new Date(),
       read: false,
     });
-
-    console.log("✅ Notification broadcasted to all users");
     return true;
   } catch (error) {
     console.error("❌ Error broadcasting notification:", error);

@@ -5,7 +5,7 @@ import styles from "./ProductCard.module.scss";
 
 const cx = classNames.bind(styles);
 
-function ProductCard({ hotel }) {
+function ProductCard({ hotel, layout = "horizontal" }) {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -34,6 +34,43 @@ function ProductCard({ hotel }) {
   const hotelData = hotel || defaultHotel;
   const images = hotelData.images || [];
   const totalImages = images.length;
+
+  // Calculate correct original price if discount exists
+  const getCurrentPrice = () => {
+    return (
+      hotelData.minRoomPrice ||
+      roomDetails.pricePerNight ||
+      hotelData.price ||
+      100000
+    );
+  };
+
+  const getOriginalPrice = () => {
+    const currentPrice = getCurrentPrice();
+
+    // If discount exists and is valid, calculate original price
+    if (
+      hotelData.discount &&
+      hotelData.discount > 0 &&
+      hotelData.discount < 100
+    ) {
+      // currentPrice = originalPrice * (1 - discount/100)
+      // originalPrice = currentPrice / (1 - discount/100)
+      const calculated = currentPrice / (1 - hotelData.discount / 100);
+      // Round up to nearest thousand for cleaner display
+      return Math.ceil(calculated / 1000) * 1000;
+    }
+
+    // If originalPrice exists and is reasonable (> 10000 VND), use it
+    if (hotelData.originalPrice && hotelData.originalPrice > 10000) {
+      return hotelData.originalPrice;
+    }
+
+    // Otherwise, no original price to show
+    return null;
+  };
+
+  const calculatedOriginalPrice = getOriginalPrice();
 
   // Get rooms from either rooms or availableRooms field
   // availableRooms contains full room objects from search
@@ -120,7 +157,9 @@ function ProductCard({ hotel }) {
 
   return (
     <div
-      className={cx("product-card")}
+      className={cx("product-card", {
+        "grid-layout": layout === "grid",
+      })}
       onClick={handleCardClick}
       style={{ cursor: "pointer" }}
     >
@@ -204,183 +243,302 @@ function ProductCard({ hotel }) {
 
       {/* Full Details */}
       <div className={cx("full-details")}>
-        {/* Hotel Title + Rating */}
-        <div className={cx("header")}>
-          <div className={cx("hotel-info")}>
-            <div className={cx("title-row")}>
-              <h3 className={cx("title")}>{hotelData.name}</h3>
-              <div className={cx("stars")}>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <svg
-                    key={i}
-                    width="18"
-                    height="18"
-                    viewBox="0 0 18 18"
-                    fill={
-                      i < Math.floor(hotelData.rating || 0)
-                        ? "#FAC91E"
-                        : "#E0E0E0"
-                    }
-                  >
-                    <path d="M9 2l2.163 4.38 4.837.702-3.5 3.412.826 4.816L9 13.26l-4.326 2.05.826-4.816-3.5-3.412 4.837-.702z" />
-                  </svg>
-                ))}
-              </div>
-            </div>
-
-            {/* Location Info */}
-            <div className={cx("location-info")}>
-              <div className={cx("location-btn")}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#ff5b26">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                </svg>
-                <span>
-                  {hotelData.city}
-                  {hotelData.country ? `, ${hotelData.country}` : ""}
-                </span>
-              </div>
-
-              <span className={cx("separator")}>•</span>
-              <span className={cx("distance")}>
-                {hotelData.distanceFromCenter || "City center"}
-              </span>
-
-              {hotelData.hasMetro && (
-                <>
-                  <span className={cx("separator")}>•</span>
-                  <div className={cx("metro-access")}>
-                    <svg width="16" height="16" viewBox="0 0 16 16">
-                      <path fill="#656F81" d="M8 1L2 6v8h12V6L8 1z" />
-                    </svg>
-                    <span>Metro access</span>
+        {layout === "grid" ? (
+          // Compact Grid Layout
+          <>
+            <div className={cx("header")}>
+              <div className={cx("hotel-info")}>
+                <div className={cx("title-row")}>
+                  <h3 className={cx("title")}>{hotelData.name}</h3>
+                  <div className={cx("stars")}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        width="16"
+                        height="16"
+                        viewBox="0 0 18 18"
+                        fill={
+                          i < Math.floor(hotelData.rating || 0)
+                            ? "#FAC91E"
+                            : "#E0E0E0"
+                        }
+                      >
+                        <path d="M9 2l2.163 4.38 4.837.702-3.5 3.412.826 4.816L9 13.26l-4.326 2.05.826-4.816-3.5-3.412 4.837-.702z" />
+                      </svg>
+                    ))}
                   </div>
-                </>
-              )}
-            </div>
+                </div>
 
-            {/* Description */}
-            {hotelData.description && (
-              <div className={cx("description")}>
-                <p>
-                  {hotelData.description.length > 150
-                    ? `${hotelData.description.substring(0, 150)}...`
-                    : hotelData.description}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Guest Rating Badge */}
-          <div className={cx("guest-rating")}>
-            <div className={cx("review-text")}>
-              <p className={cx("rating-label")}>
-                {hotelData.rating >= 4.5
-                  ? "Xuất sắc"
-                  : hotelData.rating >= 4.0
-                  ? "Rất tốt"
-                  : hotelData.rating >= 3.5
-                  ? "Tốt"
-                  : "Khá"}
-              </p>
-              <p className={cx("review-count")}>
-                {hotelData.reviewCount || hotelData.roomCount || 0}{" "}
-                {hotelData.reviewCount ? "đánh giá" : "phòng"}
-              </p>
-            </div>
-            <div className={cx("rating-badge")}>
-              <span className={cx("rating-number")}>
-                {(hotelData.rating || 5.0).toFixed(1)}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Hotel Details */}
-        <div className={cx("details")}>
-          <div className={cx("property-description")}>
-            {/* Property Info */}
-            <div className={cx("property-info")}>
-              <span className={cx("type", "bold")}>
-                {roomDetails.roomType || hotelData.type || "Hotel Room"}
-              </span>
-              {roomDetails.title && (
-                <>
-                  <span className={cx("separator")}>|</span>
-                  <span>{roomDetails.title}</span>
-                </>
-              )}
-              {roomDetails.maxAdults && (
-                <>
-                  <span className={cx("separator")}>•</span>
-                  <span>{roomDetails.maxAdults} người lớn</span>
-                </>
-              )}
-              {roomDetails.maxChildren > 0 && (
-                <>
-                  <span className={cx("separator")}>•</span>
-                  <span>{roomDetails.maxChildren} trẻ em</span>
-                </>
-              )}
-            </div>
-
-            {/* Amenities Chips */}
-            <div className={cx("chips")}>
-              {amenitiesList.slice(0, 6).map((amenity, index) => (
-                <div key={index} className={cx("chip")}>
-                  <svg width="16" height="16" viewBox="0 0 16 16">
-                    <circle cx="8" cy="8" r="3" fill="#383E48" />
+                <div className={cx("location-info")}>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="#ff5b26"
+                  >
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
-                  <span>{amenity.label}</span>
+                  <span className={cx("location")}>
+                    {hotelData.city}
+                    {hotelData.country ? `, ${hotelData.country}` : ""}
+                  </span>
+                  <span className={cx("separator")}>•</span>
+                  <span className={cx("distance")}>
+                    {hotelData.distanceFromCenter || "15.5"}
+                  </span>
                 </div>
-              ))}
-              {amenitiesList.length > 6 && (
-                <div className={cx("chip", "more")}>
-                  <span>+{amenitiesList.length - 6} more</span>
-                </div>
-              )}
+              </div>
             </div>
 
-            {/* Room Information */}
-            {hotelRooms && hotelRooms.length > 0 && (
-              <div className={cx("room-info")}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="#656F81">
-                  <path d="M14 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4H1v2h1v2h2v-2h8v2h2v-2h1v-2h-1zm-2-4v4H4V6h8z" />
-                </svg>
-                <span className={cx("room-count")}>
-                  {hotelRooms.length}{" "}
-                  {hotelRooms.length === 1 ? "phòng" : "phòng"} còn trống
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Price */}
-          <div className={cx("price-section")}>
-            {hotelData.discount && (
-              <div className={cx("discount-badge")}>
-                {hotelData.discount}% off
-              </div>
+            {hotelData.description && (
+              <p className={cx("description")}>
+                {hotelData.description.length > 100
+                  ? `${hotelData.description.substring(0, 100)}...`
+                  : hotelData.description}
+              </p>
             )}
 
-            <div className={cx("price")}>
-              {hotelData.originalPrice && (
-                <span className={cx("original-price")}>
-                  {formatPrice(hotelData.originalPrice)}
+            <div className={cx("details")}>
+              <div className={cx("rating-section")}>
+                <span className={cx("rating-label")}>
+                  {hotelData.rating >= 4.5
+                    ? "Xuất sắc"
+                    : hotelData.rating >= 4.0
+                    ? "Rất tốt"
+                    : hotelData.rating >= 3.5
+                    ? "Tốt"
+                    : "Khá"}
                 </span>
-              )}
-              <span className={cx("current-price")}>
-                {formatPrice(
-                  hotelData.minRoomPrice ||
-                    roomDetails.pricePerNight ||
-                    hotelData.price ||
-                    100000
+                <span className={cx("rating-value")}>
+                  {(hotelData.rating || 5.0).toFixed(1)}
+                </span>
+                <span className={cx("review-count")}>
+                  {hotelData.reviewCount || 0} đánh giá
+                </span>
+              </div>
+
+              <div className={cx("room-type")}>
+                <span className={cx("type-label")}>
+                  {roomDetails.roomType || hotelData.type || "Suite"}
+                </span>
+                {roomDetails.title && (
+                  <>
+                    <span className={cx("separator")}>|</span>
+                    <span className={cx("room-name")}>{roomDetails.title}</span>
+                  </>
                 )}
-              </span>
+              </div>
+
+              {roomDetails.maxAdults && (
+                <div className={cx("capacity")}>
+                  <span>• {roomDetails.maxAdults} người lớn</span>
+                  {roomDetails.maxChildren > 0 && (
+                    <span> • {roomDetails.maxChildren} trẻ em</span>
+                  )}
+                </div>
+              )}
+
+              <div className={cx("price-section")}>
+                <div className={cx("price-row")}>
+                  {calculatedOriginalPrice && (
+                    <span className={cx("original-price")}>
+                      {formatPrice(calculatedOriginalPrice).replace(
+                        " VND",
+                        " VNĐ"
+                      )}
+                    </span>
+                  )}
+                  <span className={cx("current-price")}>
+                    {formatPrice(getCurrentPrice()).replace(" VND", " VNĐ")}
+                  </span>
+                  {hotelData.discount && (
+                    <span className={cx("discount-badge")}>
+                      {hotelData.discount}% off
+                    </span>
+                  )}
+                </div>
+                <p className={cx("per-night")}>mỗi đêm</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          // Full Horizontal Layout
+          <>
+            <div className={cx("header")}>
+              <div className={cx("hotel-info")}>
+                <div className={cx("title-row")}>
+                  <h3 className={cx("title")}>{hotelData.name}</h3>
+                  <div className={cx("stars")}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        width="18"
+                        height="18"
+                        viewBox="0 0 18 18"
+                        fill={
+                          i < Math.floor(hotelData.rating || 0)
+                            ? "#FAC91E"
+                            : "#E0E0E0"
+                        }
+                      >
+                        <path d="M9 2l2.163 4.38 4.837.702-3.5 3.412.826 4.816L9 13.26l-4.326 2.05.826-4.816-3.5-3.412 4.837-.702z" />
+                      </svg>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={cx("location-info")}>
+                  <div className={cx("location-btn")}>
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="#ff5b26"
+                    >
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    <span>
+                      {hotelData.city}
+                      {hotelData.country ? `, ${hotelData.country}` : ""}
+                    </span>
+                  </div>
+
+                  <span className={cx("separator")}>•</span>
+                  <span className={cx("distance")}>
+                    {hotelData.distanceFromCenter || "City center"}
+                  </span>
+
+                  {hotelData.hasMetro && (
+                    <>
+                      <span className={cx("separator")}>•</span>
+                      <div className={cx("metro-access")}>
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                          <path fill="#656F81" d="M8 1L2 6v8h12V6L8 1z" />
+                        </svg>
+                        <span>Metro access</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {hotelData.description && (
+                  <div className={cx("description")}>
+                    <p>
+                      {hotelData.description.length > 150
+                        ? `${hotelData.description.substring(0, 150)}...`
+                        : hotelData.description}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className={cx("guest-rating")}>
+                <div className={cx("review-text")}>
+                  <p className={cx("rating-label")}>
+                    {hotelData.rating >= 4.5
+                      ? "Xuất sắc"
+                      : hotelData.rating >= 4.0
+                      ? "Rất tốt"
+                      : hotelData.rating >= 3.5
+                      ? "Tốt"
+                      : "Khá"}
+                  </p>
+                  <p className={cx("review-count")}>
+                    {hotelData.reviewCount || hotelData.roomCount || 0}{" "}
+                    {hotelData.reviewCount ? "đánh giá" : "phòng"}
+                  </p>
+                </div>
+                <div className={cx("rating-badge")}>
+                  <span className={cx("rating-number")}>
+                    {(hotelData.rating || 5.0).toFixed(1)}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <p className={cx("price-info")}>mỗi đêm</p>
-          </div>
-        </div>
+            <div className={cx("details")}>
+              <div className={cx("property-description")}>
+                <div className={cx("property-info")}>
+                  <span className={cx("type", "bold")}>
+                    {roomDetails.roomType || hotelData.type || "Hotel Room"}
+                  </span>
+                  {roomDetails.title && (
+                    <>
+                      <span className={cx("separator")}>|</span>
+                      <span>{roomDetails.title}</span>
+                    </>
+                  )}
+                  {roomDetails.maxAdults && (
+                    <>
+                      <span className={cx("separator")}>•</span>
+                      <span>{roomDetails.maxAdults} người lớn</span>
+                    </>
+                  )}
+                  {roomDetails.maxChildren > 0 && (
+                    <>
+                      <span className={cx("separator")}>•</span>
+                      <span>{roomDetails.maxChildren} trẻ em</span>
+                    </>
+                  )}
+                </div>
+
+                <div className={cx("chips")}>
+                  {amenitiesList.slice(0, 6).map((amenity, index) => (
+                    <div key={index} className={cx("chip")}>
+                      <svg width="16" height="16" viewBox="0 0 16 16">
+                        <circle cx="8" cy="8" r="3" fill="#383E48" />
+                      </svg>
+                      <span>{amenity.label}</span>
+                    </div>
+                  ))}
+                  {amenitiesList.length > 6 && (
+                    <div className={cx("chip", "more")}>
+                      <span>+{amenitiesList.length - 6} more</span>
+                    </div>
+                  )}
+                </div>
+
+                {hotelRooms && hotelRooms.length > 0 && (
+                  <div className={cx("room-info")}>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="#656F81"
+                    >
+                      <path d="M14 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4H1v2h1v2h2v-2h8v2h2v-2h1v-2h-1zm-2-4v4H4V6h8z" />
+                    </svg>
+                    <span className={cx("room-count")}>
+                      {hotelRooms.length}{" "}
+                      {hotelRooms.length === 1 ? "phòng" : "phòng"} còn trống
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className={cx("price-section")}>
+                {hotelData.discount && (
+                  <div className={cx("discount-badge")}>
+                    {hotelData.discount}% off
+                  </div>
+                )}
+
+                <div className={cx("price")}>
+                  {calculatedOriginalPrice && (
+                    <span className={cx("original-price")}>
+                      {formatPrice(calculatedOriginalPrice)}
+                    </span>
+                  )}
+                  <span className={cx("current-price")}>
+                    {formatPrice(getCurrentPrice())}
+                  </span>
+                </div>
+
+                <p className={cx("price-info")}>mỗi đêm</p>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

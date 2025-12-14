@@ -240,6 +240,17 @@
   }
 }
 
+.paymentBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .viewBtn {
   background: #e3f2fd;
   color: #1976d2;

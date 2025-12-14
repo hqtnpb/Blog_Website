@@ -5,8 +5,213 @@
   border-radius: 16px;
   border: 1px solid #dddfe3;
   background: #ffffff;
-  width: 920px;
-  height: 312px;
+  width: 100%;
+  min-height: 280px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    min-height: auto;
+    gap: 0;
+    padding: 0;
+  }
+
+  // Vertical layout for grid
+  &.grid-layout {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    border-radius: 16px;
+
+    .image-slider {
+      width: 100%;
+      height: 240px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .full-details {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .header {
+        .hotel-info {
+          .title-row {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+
+            .title {
+              font-size: 1.8rem;
+              font-weight: 600;
+              line-height: 1.3;
+              color: #1f2226;
+              margin: 0;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+            }
+
+            .stars {
+              display: flex;
+              gap: 2px;
+
+              svg {
+                width: 14px;
+                height: 14px;
+              }
+            }
+          }
+
+          .location-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 1.3rem;
+            color: #656f81;
+
+            svg {
+              width: 14px;
+              height: 14px;
+              flex-shrink: 0;
+            }
+
+            .location {
+              color: #383e48;
+              font-weight: 500;
+            }
+
+            .separator {
+              color: #dddfe3;
+            }
+
+            .distance {
+              color: #656f81;
+            }
+          }
+        }
+      }
+
+      .description {
+        font-size: 1.3rem;
+        line-height: 1.5;
+        color: #656f81;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin: 0;
+      }
+
+      .details {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .rating-section {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 1.3rem;
+
+          .rating-label {
+            color: #383e48;
+            font-weight: 500;
+          }
+
+          .rating-value {
+            background: #ff5b26;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1.3rem;
+          }
+
+          .review-count {
+            color: #656f81;
+          }
+        }
+
+        .room-type {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 1.3rem;
+
+          .type-label {
+            font-weight: 600;
+            color: #2b3037;
+          }
+
+          .separator {
+            color: #dddfe3;
+          }
+
+          .room-name {
+            color: #656f81;
+          }
+        }
+
+        .capacity {
+          font-size: 1.3rem;
+          color: #656f81;
+        }
+
+        .price-section {
+          margin-top: 8px;
+          padding-top: 12px;
+          border-top: 1px solid #e5e7eb;
+
+          .price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+
+            .original-price {
+              font-size: 1.3rem;
+              color: #8b94a4;
+              text-decoration: line-through;
+            }
+
+            .current-price {
+              font-size: 2rem;
+              font-weight: 700;
+              color: #1f2226;
+            }
+
+            .discount-badge {
+              background: #dff4e8;
+              color: #049153;
+              padding: 2px 8px;
+              border-radius: 6px;
+              font-size: 1.2rem;
+              font-weight: 600;
+            }
+          }
+
+          .per-night {
+            font-size: 1.2rem;
+            color: #8b94a4;
+            margin-top: 2px;
+          }
+        }
+      }
+    }
+  }
 
   /* Image Slider */
   .image-slider {
@@ -17,11 +222,21 @@
     overflow: hidden;
     flex-shrink: 0;
 
+    @media (max-width: 768px) {
+      width: 100%;
+      height: 220px;
+      border-radius: 16px 16px 0 0;
+    }
+
     .image {
       width: 100%;
       height: 100%;
       object-fit: cover;
       border-radius: 12px;
+
+      @media (max-width: 768px) {
+        border-radius: 16px 16px 0 0;
+      }
     }
 
     .no-image {

@@ -35,7 +35,15 @@ function PaymentPage() {
   const { hotel, room } = stateData;
 
   useEffect(() => {
-    // Check if redirected from MoMo
+    // Kiểm tra nếu booking_id không hợp lệ
+    if (!booking_id || booking_id === "callback") {
+      console.error("❌ Invalid booking_id:", booking_id);
+      toast.error("Không tìm thấy thông tin đặt phòng");
+      navigate("/hotels");
+      return;
+    }
+
+    // Check if redirected from MoMo or payment gateway
     const urlParams = new URLSearchParams(window.location.search);
     const resultCode = urlParams.get("resultCode");
 
@@ -68,10 +76,9 @@ function PaymentPage() {
         },
       };
 
-      const response = await axios.get(
-        `${apiUrl}/booking/${booking_id}`,
-        config
-      );
+      const fetchUrl = `${apiUrl}/booking/${booking_id}`;
+
+      const response = await axios.get(fetchUrl, config);
       setBooking(response.data);
       setPaymentStatus(response.data.paymentStatus || "pending");
     } catch (error) {
@@ -84,35 +91,67 @@ function PaymentPage() {
 
   const handlePaymentReturn = async (resultCode) => {
     if (resultCode === "0") {
+      // Update backend status when payment successful
+      try {
+        const userDataStr = sessionStorage.getItem("user");
+        const userData = userDataStr ? JSON.parse(userDataStr) : null;
+        const token = userData?.accessToken;
+
+        if (token) {
+          await axios.patch(
+            `${apiUrl}/booking/${booking_id}`,
+            {
+              paymentStatus: "confirmed",
+              status: "confirmed",
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+        }
+      } catch (error) {
+        console.error("❌ [Payment] Failed to update status:", error);
+        // Still show success to user since payment was successful
+      }
+
       setPaymentStatus("success");
-      toast.success("Payment successful!");
+      toast.success("Thanh toán thành công!");
       await fetchBooking();
     } else {
+      // Update failed status
+      try {
+        const userDataStr = sessionStorage.getItem("user");
+        const userData = userDataStr ? JSON.parse(userDataStr) : null;
+        const token = userData?.accessToken;
+
+        if (token) {
+          await axios.patch(
+            `${apiUrl}/booking/${booking_id}`,
+            { paymentStatus: "failed" },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+        }
+      } catch (error) {
+        console.error("❌ [Payment] Failed to update failed status:", error);
+      }
+
       setPaymentStatus("failed");
-      toast.error("Payment failed. Please try again.");
+      toast.error("Thanh toán thất bại. Vui lòng thử lại.");
       await fetchBooking();
     }
   };
 
   const handleMoMoPayment = async () => {
     try {
-      console.log("🔍 [MoMo] Starting payment process...");
-      console.log("🔍 [MoMo] Booking ID:", booking_id);
-      console.log("🔍 [MoMo] API URL:", apiUrl);
-
       setProcessingPayment(true);
 
       // Get token from sessionStorage (matching login implementation)
       const userDataStr = sessionStorage.getItem("user");
-      console.log(
-        "🔍 [MoMo] User data from session:",
-        userDataStr ? "Found" : "Not found"
-      );
 
       const userData = userDataStr ? JSON.parse(userDataStr) : null;
       const token = userData?.accessToken;
-
-      console.log("🔍 [MoMo] Token:", token ? "Present" : "Missing");
 
       if (!token) {
         console.error("❌ [MoMo] No token found - redirecting to login");
@@ -133,20 +172,14 @@ function PaymentPage() {
         orderInfo: `Payment for booking #${booking_id}`,
       };
 
-      console.log("🔍 [MoMo] Payload:", payload);
-      console.log("🔍 [MoMo] Calling API:", `${apiUrl}/payment/momo/create`);
-
       const response = await axios.post(
         `${apiUrl}/payment/momo/create`,
         payload,
         config
       );
 
-      console.log("✅ [MoMo] API Response:", response.data);
-
       // Redirect to MoMo payment URL
       if (response.data.paymentUrl) {
-        console.log("✅ [MoMo] Redirecting to:", response.data.paymentUrl);
         window.location.href = response.data.paymentUrl;
       } else {
         throw new Error("Payment URL not received");
@@ -159,21 +192,60 @@ function PaymentPage() {
     }
   };
 
-  const handleVNPayPayment = async () => {
+  const handleCashPayment = async () => {
     try {
-      console.log("🔍 [VNPay] Starting payment process...");
-      console.log("🔍 [VNPay] Booking ID:", booking_id);
+      console.log("🔍 [Cash] Starting cash payment process...");
+      console.log("🔍 [Cash] Booking ID:", booking_id);
 
       setProcessingPayment(true);
 
       // Get token from sessionStorage
       const userDataStr = sessionStorage.getItem("user");
-      console.log("🔍 [VNPay] User data:", userDataStr ? "Found" : "Not found");
-
       const userData = userDataStr ? JSON.parse(userDataStr) : null;
       const token = userData?.accessToken;
 
-      console.log("🔍 [VNPay] Token:", token ? "Present" : "Missing");
+      if (!token) {
+        toast.error("Vui lòng đăng nhập");
+        navigate("/signin");
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      // Update booking with cash payment method
+      const response = await axios.patch(
+        `${apiUrl}/booking/${booking_id}`,
+        {
+          paymentMethod: "cash",
+          paymentStatus: "pending",
+          status: "confirmed",
+        },
+        config
+      );
+
+      toast.success("Đặt phòng thành công! Vui lòng thanh toán tại khách sạn.");
+      setPaymentStatus("success");
+      await fetchBooking();
+    } catch (error) {
+      console.error("❌ [Cash] Error:", error);
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra");
+      setProcessingPayment(false);
+    }
+  };
+
+  const handleVNPayPayment = async () => {
+    try {
+      setProcessingPayment(true);
+
+      // Get token from sessionStorage
+      const userDataStr = sessionStorage.getItem("user");
+
+      const userData = userDataStr ? JSON.parse(userDataStr) : null;
+      const token = userData?.accessToken;
 
       if (!token) {
         console.error("❌ [VNPay] No token - redirecting to login");
@@ -192,19 +264,14 @@ function PaymentPage() {
         bookingId: booking_id,
       };
 
-      console.log("🔍 [VNPay] Calling API...");
-
       const response = await axios.post(
         `${apiUrl}/payment/vnpay/create`,
         payload,
         config
       );
 
-      console.log("✅ [VNPay] Response:", response.data);
-
       // Redirect to VNPay payment URL
       if (response.data.paymentUrl) {
-        console.log("✅ [VNPay] Redirecting...");
         window.location.href = response.data.paymentUrl;
       } else {
         throw new Error("Payment URL not received");
@@ -245,7 +312,7 @@ function PaymentPage() {
       <div className={cx("error")}>
         <FontAwesomeIcon icon={faTimesCircle} size="4x" color="#ff5b26" />
         <h2>Không tìm thấy đặt phòng</h2>
-        <button onClick={() => navigate("/")} className={cx("home-btn")}>
+        <button onClick={() => navigate("/hotels")} className={cx("home-btn")}>
           <FontAwesomeIcon icon={faHome} />
           Về trang chủ
         </button>
@@ -317,7 +384,10 @@ function PaymentPage() {
               >
                 Xem đặt phòng của tôi
               </button>
-              <button onClick={() => navigate("/")} className={cx("home-btn")}>
+              <button
+                onClick={() => navigate("/hotels")}
+                className={cx("home-btn")}
+              >
                 <FontAwesomeIcon icon={faHome} />
                 Về trang chủ
               </button>
@@ -369,7 +439,7 @@ function PaymentPage() {
                 )}
               </button>
               <button
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/hotels")}
                 className={cx("cancel-btn")}
               >
                 Hủy
@@ -471,6 +541,27 @@ function PaymentPage() {
                   </>
                 )}
               </button>
+            </div>
+
+            {/* Cash Payment */}
+            <div className={cx("payment-option")}>
+              <button
+                onClick={handleCashPayment}
+                className={cx("cash-btn")}
+                disabled={processingPayment}
+              >
+                {processingPayment ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} spin />
+                    Đang xử lý...
+                  </>
+                ) : (
+                  <>💵 Thanh toán tại khách sạn</>
+                )}
+              </button>
+              <p className={cx("payment-note")}>
+                Thanh toán trực tiếp khi nhận phòng
+              </p>
             </div>
           </div>
 

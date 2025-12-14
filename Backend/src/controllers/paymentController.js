@@ -17,29 +17,17 @@ const paymentController = {
   // Create MoMo payment
   createMoMoPayment: async (req, res) => {
     try {
-      console.log("📝 MoMo Payment Request:", {
-        body: req.body,
-        userId: req.user.id,
-      });
-
       const { bookingId } = req.body;
       const userId = req.user.id;
 
       // Find booking
       const booking = await Booking.findOne({ _id: bookingId, user: userId });
 
-      console.log("🔍 Booking found:", booking ? "Yes" : "No");
-
       if (!booking) {
         return res
           .status(404)
           .json({ success: false, message: "Booking not found." });
       }
-
-      console.log("💰 Booking status:", {
-        paymentStatus: booking.paymentStatus,
-        totalPrice: booking.totalPrice,
-      });
 
       if (booking.paymentStatus !== "pending") {
         return res.status(400).json({
@@ -55,10 +43,10 @@ const paymentController = {
         process.env.MOMO_SECRET_KEY || "K951B6PE1waDMi640xX08PD3vg6EkVlz";
       const redirectUrl =
         process.env.MOMO_REDIRECT_URL ||
-        `${process.env.FRONTEND_URL}/payment/callback`;
+        `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}`;
       const ipnUrl =
         process.env.MOMO_IPN_URL ||
-        `${process.env.BACKEND_URL}/api/payment/momo/callback`;
+        `${process.env.BACKEND_URL || "http://localhost:8000"}/api/payment/momo/callback`;
       const requestType = "payWithMethod";
 
       // Generate unique IDs
@@ -96,23 +84,10 @@ const paymentController = {
       };
 
       // Call MoMo API
-      console.log("🚀 Calling MoMo API with:", {
-        amount,
-        orderId,
-        orderInfo,
-        redirectUrl,
-        ipnUrl,
-      });
-
       const momoResponse = await axios.post(
         "https://test-payment.momo.vn/v2/gateway/api/create",
         requestBody
       );
-
-      console.log("✅ MoMo Response:", {
-        resultCode: momoResponse.data.resultCode,
-        message: momoResponse.data.message,
-      });
 
       if (momoResponse.data.resultCode === 0) {
         // Update booking with payment info
@@ -208,9 +183,7 @@ const paymentController = {
               paymentMethod: "MoMo",
               transactionId: transId,
             });
-            console.log(`✅ Payment receipt sent to ${userEmail}`);
           } else {
-            console.warn(`⚠️ No email found for booking ${bookingId}`);
           }
         } catch (emailError) {
           console.error("❌ Failed to send payment receipt:", emailError);
@@ -265,8 +238,6 @@ const paymentController = {
           );
         }
 
-        console.log(`Payment successful for booking ${bookingId}`);
-
         return res
           .status(200)
           .json({ success: true, message: "Payment processed successfully" });
@@ -274,8 +245,6 @@ const paymentController = {
         // Payment failed
         booking.paymentStatus = "failed";
         await booking.save();
-
-        console.log(`Payment failed for booking ${bookingId}: ${message}`);
 
         return res
           .status(200)
@@ -320,29 +289,17 @@ const paymentController = {
   // Create VNPay payment
   createVNPayPayment: async (req, res) => {
     try {
-      console.log("📝 VNPay Payment Request:", {
-        body: req.body,
-        userId: req.user.id,
-      });
-
       const { bookingId } = req.body;
       const userId = req.user.id;
 
       // Find booking
       const booking = await Booking.findOne({ _id: bookingId, user: userId });
 
-      console.log("🔍 Booking found:", booking ? "Yes" : "No");
-
       if (!booking) {
         return res
           .status(404)
           .json({ success: false, message: "Booking not found." });
       }
-
-      console.log("💰 Booking details:", {
-        paymentStatus: booking.paymentStatus,
-        totalPrice: booking.totalPrice,
-      });
 
       if (booking.paymentStatus !== "pending") {
         return res.status(400).json({
@@ -360,8 +317,6 @@ const paymentController = {
         req.connection.remoteAddress ||
         "127.0.0.1";
 
-      console.log("🚀 Creating VNPay payment URL...");
-
       const paymentUrl = createVNPayPaymentUrl({
         orderId,
         amount,
@@ -377,8 +332,6 @@ const paymentController = {
       booking.paymentMethod = "vnpay";
       booking.paymentStatus = "processing";
       await booking.save();
-
-      console.log("✅ VNPay payment URL created:", paymentUrl);
 
       return res.status(200).json({
         success: true,
@@ -404,8 +357,6 @@ const paymentController = {
   // VNPay Callback (return URL)
   handleVNPayCallback: async (req, res) => {
     try {
-      console.log("📥 VNPay Callback received:", req.query);
-
       const vnpayParams = req.query;
 
       // Verify signature
@@ -468,9 +419,7 @@ const paymentController = {
               paymentMethod: "VNPay",
               transactionId: vnp_TransactionNo,
             });
-            console.log(`✅ Payment receipt sent to ${userEmail}`);
           } else {
-            console.warn(`⚠️ No email found for booking ${bookingId}`);
           }
         } catch (emailError) {
           console.error("❌ Failed to send payment receipt:", emailError);
@@ -525,10 +474,8 @@ const paymentController = {
           );
         }
 
-        console.log(`✅ VNPay payment successful for booking ${bookingId}`);
-
         return res.redirect(
-          `${process.env.FRONTEND_URL}/booking/success?bookingId=${bookingId}`
+          `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}?resultCode=0&message=success`
         );
       } else {
         // Payment failed
@@ -536,12 +483,9 @@ const paymentController = {
         await booking.save();
 
         const errorMessage = parseVNPayResponseCode(vnp_ResponseCode);
-        console.log(
-          `❌ VNPay payment failed for booking ${bookingId}: ${errorMessage}`
-        );
 
         return res.redirect(
-          `${process.env.FRONTEND_URL}/booking/failed?bookingId=${bookingId}&message=${encodeURIComponent(errorMessage)}`
+          `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}?resultCode=1&message=${encodeURIComponent(errorMessage)}`
         );
       }
     } catch (error) {
@@ -555,8 +499,6 @@ const paymentController = {
   // VNPay IPN (Instant Payment Notification)
   handleVNPayIPN: async (req, res) => {
     try {
-      console.log("📥 VNPay IPN received:", req.query);
-
       const vnpayParams = req.query;
 
       // Verify signature
@@ -598,10 +540,6 @@ const paymentController = {
           booking.status = "confirmed";
           booking.transactionId = vnp_TransactionNo;
           await booking.save();
-
-          console.log(
-            `✅ VNPay IPN: Payment confirmed for booking ${bookingId}`
-          );
         }
 
         return res.status(200).json({ RspCode: "00", Message: "Success" });
@@ -609,8 +547,6 @@ const paymentController = {
         // Payment failed
         booking.paymentStatus = "failed";
         await booking.save();
-
-        console.log(`❌ VNPay IPN: Payment failed for booking ${bookingId}`);
 
         return res.status(200).json({ RspCode: "00", Message: "Success" });
       }

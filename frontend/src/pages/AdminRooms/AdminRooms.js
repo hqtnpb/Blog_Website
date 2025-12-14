@@ -41,6 +41,8 @@ function AdminRooms() {
     roomNumber: "",
     type: "",
     pricePerNight: "",
+    pricePerDay: "",
+    bookingTypes: ["night"],
     maxAdults: "",
     maxChildren: "",
     amenities: [],
@@ -66,7 +68,7 @@ function AdminRooms() {
             rooms.push({
               ...room,
               hotelName: hotel.name,
-              hotelId: hotel._id,
+              hotelId: String(hotel._id), // Convert to string for consistent comparison
               pricePerNight: Number(room.pricePerNight) || 0,
               maxAdults: Number(room.maxAdults) || 0,
               maxChildren: Number(room.maxChildren) || 0,
@@ -94,6 +96,8 @@ function AdminRooms() {
         title: room.title || "",
         desc: room.desc || "",
         pricePerNight: room.pricePerNight || "",
+        pricePerDay: room.pricePerDay || "",
+        bookingTypes: room.bookingTypes || ["night"],
         maxAdults: room.maxAdults || "",
         maxChildren: room.maxChildren || "",
         amenities: room.amenities || [],
@@ -107,6 +111,8 @@ function AdminRooms() {
         title: "",
         desc: "",
         pricePerNight: "",
+        pricePerDay: "",
+        bookingTypes: ["night"],
         maxAdults: "",
         maxChildren: "",
         amenities: [],
@@ -157,15 +163,37 @@ function AdminRooms() {
       return;
     }
 
-    // Validate price
-    const price = Number(formData.pricePerNight);
-    if (!price || price < 50000) {
-      toast.error("Giá phòng phải lớn hơn 50.000 VND");
+    // Validate price per night
+    const priceNight = Number(formData.pricePerNight);
+    if (!priceNight || priceNight < 50000) {
+      toast.error("Giá phòng theo đêm phải lớn hơn 50.000 VND");
       return;
     }
 
-    if (price > 100000000) {
-      toast.error("Giá phòng không hợp lệ (quá cao)");
+    if (priceNight > 100000000) {
+      toast.error("Giá phòng theo đêm không hợp lệ (quá cao)");
+      return;
+    }
+
+    // Validate price per day if booking types include day or both
+    const priceDay = Number(formData.pricePerDay);
+    const hasDay =
+      formData.bookingTypes.includes("day") ||
+      formData.bookingTypes.includes("both");
+    if (hasDay) {
+      if (!priceDay || priceDay < 50000) {
+        toast.error("Giá phòng theo ngày phải lớn hơn 50.000 VND");
+        return;
+      }
+      if (priceDay > 100000000) {
+        toast.error("Giá phòng theo ngày không hợp lệ (quá cao)");
+        return;
+      }
+    }
+
+    // Validate booking types
+    if (!formData.bookingTypes || formData.bookingTypes.length === 0) {
+      toast.error("Vui lòng chọn ít nhất một loại đặt phòng");
       return;
     }
 
@@ -175,7 +203,9 @@ function AdminRooms() {
       title:
         formData.title || `${formData.type} - Phòng ${formData.roomNumber}`,
       desc: formData.desc || "",
-      pricePerNight: price,
+      pricePerNight: priceNight,
+      pricePerDay: priceDay || 0,
+      bookingTypes: formData.bookingTypes,
       maxAdults: Number(formData.maxAdults) || 1,
       maxChildren: Number(formData.maxChildren) || 0,
       amenities: formData.amenities,
@@ -223,7 +253,8 @@ function AdminRooms() {
       room.hotelName?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesHotel =
-      selectedHotelFilter === "all" || room.hotelId === selectedHotelFilter;
+      selectedHotelFilter === "all" ||
+      String(room.hotelId) === String(selectedHotelFilter);
 
     return matchesSearch && matchesHotel;
   });
@@ -345,8 +376,61 @@ function AdminRooms() {
                   </p>
 
                   <div className={styles.roomPrice}>
-                    {formatCurrency(room.pricePerNight)}/đêm
+                    <div>{formatCurrency(room.pricePerNight)}/đêm</div>
+                    {(room.bookingTypes?.includes("day") ||
+                      room.bookingTypes?.includes("both")) &&
+                      room.pricePerDay > 0 && (
+                        <div
+                          style={{
+                            fontSize: "0.9em",
+                            color: "#666",
+                            marginTop: "4px",
+                          }}
+                        >
+                          {formatCurrency(room.pricePerDay)}/ngày
+                        </div>
+                      )}
                   </div>
+
+                  {room.bookingTypes && room.bookingTypes.length > 0 && (
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "6px",
+                        flexWrap: "wrap",
+                        marginTop: "8px",
+                      }}
+                    >
+                      {room.bookingTypes.map((type) => (
+                        <span
+                          key={type}
+                          style={{
+                            padding: "2px 8px",
+                            borderRadius: "4px",
+                            fontSize: "0.75rem",
+                            background:
+                              type === "night"
+                                ? "#e3f2fd"
+                                : type === "day"
+                                ? "#fff3e0"
+                                : "#f3e5f5",
+                            color:
+                              type === "night"
+                                ? "#1976d2"
+                                : type === "day"
+                                ? "#f57c00"
+                                : "#7b1fa2",
+                          }}
+                        >
+                          {type === "night"
+                            ? "Đêm"
+                            : type === "day"
+                            ? "Ngày"
+                            : "Cả 2"}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
                   <div className={styles.roomCapacity}>
                     <div className={styles.capacity}>
@@ -539,32 +623,164 @@ function AdminRooms() {
                   />
                 </div>
 
-                {/* Price */}
+                {/* Booking Types */}
                 <div className={styles.formGroup}>
                   <label>
-                    Giá/Đêm (VND) <span className={styles.required}>*</span>
+                    Loại Đặt Phòng <span className={styles.required}>*</span>
                   </label>
-                  <input
-                    type="number"
-                    name="pricePerNight"
-                    value={formData.pricePerNight}
-                    onChange={handleInputChange}
-                    placeholder="500000"
-                    min="50000"
-                    step="10000"
-                    disabled={modalMode === "view"}
-                    required
-                  />
+                  <div
+                    style={{ display: "flex", gap: "15px", marginTop: "8px" }}
+                  >
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.bookingTypes.includes("night")}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData((prev) => ({
+                            ...prev,
+                            bookingTypes: checked
+                              ? [...prev.bookingTypes, "night"]
+                              : prev.bookingTypes.filter((t) => t !== "night"),
+                          }));
+                        }}
+                        disabled={modalMode === "view"}
+                        style={{ marginRight: "6px" }}
+                      />
+                      Đặt theo đêm
+                    </label>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.bookingTypes.includes("day")}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData((prev) => ({
+                            ...prev,
+                            bookingTypes: checked
+                              ? [...prev.bookingTypes, "day"]
+                              : prev.bookingTypes.filter((t) => t !== "day"),
+                          }));
+                        }}
+                        disabled={modalMode === "view"}
+                        style={{ marginRight: "6px" }}
+                      />
+                      Đặt theo ngày
+                    </label>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.bookingTypes.includes("both")}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData((prev) => ({
+                            ...prev,
+                            bookingTypes: checked
+                              ? [...prev.bookingTypes, "both"]
+                              : prev.bookingTypes.filter((t) => t !== "both"),
+                          }));
+                        }}
+                        disabled={modalMode === "view"}
+                        style={{ marginRight: "6px" }}
+                      />
+                      Cả ngày & đêm
+                    </label>
+                  </div>
                   <small
                     style={{
                       color: "#6b7280",
-                      fontSize: "0.85rem",
-                      marginTop: "0.25rem",
+                      fontSize: "12px",
                       display: "block",
+                      marginTop: "4px",
                     }}
                   >
-                    Giá tối thiểu: 50.000 VND
+                    Chọn ít nhất một loại đặt phòng
                   </small>
+                </div>
+
+                {/* Prices */}
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label>
+                      Giá/Đêm (VND) <span className={styles.required}>*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="pricePerNight"
+                      value={formData.pricePerNight}
+                      onChange={handleInputChange}
+                      placeholder="500000"
+                      min="50000"
+                      step="10000"
+                      disabled={modalMode === "view"}
+                      required
+                    />
+                    <small
+                      style={{
+                        color: "#6b7280",
+                        fontSize: "0.85rem",
+                        marginTop: "0.25rem",
+                        display: "block",
+                      }}
+                    >
+                      Giá tối thiểu: 50.000 VND
+                    </small>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>
+                      Giá/Ngày (VND)
+                      {(formData.bookingTypes.includes("day") ||
+                        formData.bookingTypes.includes("both")) && (
+                        <span className={styles.required}>*</span>
+                      )}
+                    </label>
+                    <input
+                      type="number"
+                      name="pricePerDay"
+                      value={formData.pricePerDay}
+                      onChange={handleInputChange}
+                      placeholder="300000"
+                      min="50000"
+                      step="10000"
+                      disabled={modalMode === "view"}
+                      required={
+                        formData.bookingTypes.includes("day") ||
+                        formData.bookingTypes.includes("both")
+                      }
+                    />
+                    <small
+                      style={{
+                        color: "#6b7280",
+                        fontSize: "0.85rem",
+                        marginTop: "0.25rem",
+                        display: "block",
+                      }}
+                    >
+                      {formData.bookingTypes.includes("day") ||
+                      formData.bookingTypes.includes("both")
+                        ? "Bắt buộc cho đặt theo ngày"
+                        : "Tùy chọn"}
+                    </small>
+                  </div>
                 </div>
 
                 {/* Capacity */}

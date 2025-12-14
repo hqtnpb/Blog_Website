@@ -22,6 +22,11 @@ router.put("/:bookingId/cancel", verifyJWT, bookingController.cancelBooking);
 // @access  Private
 router.get("/:bookingId", verifyJWT, bookingController.getBookingById);
 
+// @route   PATCH /api/booking/:bookingId
+// @desc    Update a booking (for payment method, status, etc.)
+// @access  Private
+router.patch("/:bookingId", verifyJWT, bookingController.updateBooking);
+
 // @route   GET /api/booking/check-availability
 // @desc    Check if a room is available for given dates
 // @access  Public

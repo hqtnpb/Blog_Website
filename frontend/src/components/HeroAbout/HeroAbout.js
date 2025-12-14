@@ -19,12 +19,12 @@ function HeroAbout() {
                 width="120"
                 height="120"
               />
-              <h1 className={cx("title")}>Connecting People & Places</h1>
+              <h1 className={cx("title")}>Kết nối con người và địa điểm</h1>
               <p className={cx("desc")}>
-                Though exploration is often associated with places, at its very
-                heart, it’s about the people. For nearly 70 years, the
-                person-to-person experience has been at the very core of Liberty
-                Travel’s mission.
+                Mặc dù việc khám phá thường gắn liền với địa điểm, nhưng ở tận
+                cùng sâu thẳm, đó là về con người. Gần 70 năm qua, trải nghiệm
+                giữa con người với con người luôn là lõi cốt trong sứ mệnh của
+                chúng tôi.
               </p>
             </div>
           </div>

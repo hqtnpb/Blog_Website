@@ -28,6 +28,7 @@ const formatDataToSend = (user) => {
     profile_img: user.personal_info.profile_img,
     username: user.personal_info.username,
     email: user.personal_info.email,
+    role: user.personal_info.role,
   };
 };
 

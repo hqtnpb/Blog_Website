@@ -235,8 +235,106 @@ const replyToReview = async (req, res) => {
   }
 };
 
+// 4. UPDATE A REVIEW (Only by the review owner)
+const updateReview = async (req, res) => {
+  const { reviewId } = req.params;
+  const { rating, comment } = req.body;
+  const userId = req.user.id;
+
+  if (!rating || !comment) {
+    return res.status(400).json({
+      message: "Vui lòng cung cấp đầy đủ rating và comment.",
+    });
+  }
+
+  if (rating < 1 || rating > 5) {
+    return res.status(400).json({
+      message: "Rating phải từ 1 đến 5.",
+    });
+  }
+
+  try {
+    const review = await Review.findById(reviewId);
+
+    if (!review) {
+      return res.status(404).json({
+        message: "Không tìm thấy đánh giá.",
+      });
+    }
+
+    // Check if the user is the owner of the review
+    if (review.user.toString() !== userId) {
+      return res.status(403).json({
+        message: "Bạn không có quyền chỉnh sửa đánh giá này.",
+      });
+    }
+
+    // Update the review
+    review.rating = rating;
+    review.comment = comment.trim();
+    const updatedReview = await review.save();
+
+    // Update hotel rating
+    await updateHotelRating(review.hotel);
+
+    res.status(200).json({
+      message: "Đánh giá đã được cập nhật thành công!",
+      review: updatedReview,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Lỗi máy chủ khi cập nhật đánh giá.",
+      error: error.message,
+    });
+  }
+};
+
+// 5. DELETE A REVIEW (Only by the review owner or admin)
+const deleteReview = async (req, res) => {
+  const { reviewId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const review = await Review.findById(reviewId);
+
+    if (!review) {
+      return res.status(404).json({
+        message: "Không tìm thấy đánh giá.",
+      });
+    }
+
+    // Check if the user is the owner or an admin
+    const user = await User.findById(userId);
+    const isOwner = review.user.toString() === userId;
+    const isAdmin = user?.personal_info?.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        message: "Bạn không có quyền xóa đánh giá này.",
+      });
+    }
+
+    const hotelId = review.hotel;
+    await Review.findByIdAndDelete(reviewId);
+
+    // Update hotel rating after deletion
+    await updateHotelRating(hotelId);
+
+    res.status(200).json({
+      message: "Đánh giá đã được xóa thành công!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Lỗi máy chủ khi xóa đánh giá.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createReview,
   getReviewsForHotel,
   replyToReview,
+  updateReview,
+  deleteReview,
 };

@@ -57,7 +57,7 @@ function Header() {
           />
 
           <div className={cx("logo")}>
-            <Link to="/">
+            <Link to="/hotels">
               <img
                 src={image.logo}
                 alt="Path Way"

@@ -196,7 +196,7 @@ function EditProfile() {
           <div className={cx("form-row")}>
             <div className={cx("form-group")}>
               <label className={cx("form-label")}>
-                <FontAwesomeIcon icon={faUser} /> Username
+                <FontAwesomeIcon icon={faUser} /> Tên người dùng
               </label>
               <input
                 type="text"
@@ -204,7 +204,7 @@ function EditProfile() {
                 value={formData.username}
                 onChange={handleInputChange}
                 className={cx("form-input")}
-                placeholder="Nhập username"
+                placeholder="Nhập tên người dùng"
                 required
               />
             </div>
@@ -223,7 +223,7 @@ function EditProfile() {
           </div>
 
           <div className={cx("form-group", "full-width")}>
-            <label className={cx("form-label")}>Bio</label>
+            <label className={cx("form-label")}>Tiểu sử</label>
             <textarea
               name="bio"
               value={formData.bio}

@@ -35,6 +35,11 @@ function RoomDetails() {
     checkIn: new Date().toISOString().split("T")[0],
     checkOut: new Date(Date.now() + 86400000).toISOString().split("T")[0],
   });
+  const [guests, setGuests] = useState({
+    adults: 2,
+    children: 0,
+  });
+  const [bookingType, setBookingType] = useState("night"); // "night", "day", or "both"
 
   const apiUrl =
     process.env.REACT_APP_SERVER_DOMAIN || "http://localhost:8000/api";
@@ -65,6 +70,11 @@ function RoomDetails() {
       }
 
       setRoom(roomData);
+
+      // Set default booking type based on available options
+      if (roomData.bookingTypes && roomData.bookingTypes.length > 0) {
+        setBookingType(roomData.bookingTypes[0]);
+      }
     } catch (error) {
       console.error("Error fetching room details:", error);
       toast.error("Không thể tải thông tin phòng");
@@ -89,8 +99,9 @@ function RoomDetails() {
       state: {
         checkIn: bookingDates.checkIn,
         checkOut: bookingDates.checkOut,
-        adults: 2,
-        children: 0,
+        adults: guests.adults,
+        children: guests.children,
+        bookingType: bookingType,
       },
     });
   };
@@ -135,7 +146,25 @@ function RoomDetails() {
       (1000 * 60 * 60 * 24)
   );
 
-  const totalPrice = room.pricePerNight * nights;
+  // Calculate price based on booking type
+  const getPricePerUnit = () => {
+    if (bookingType === "day") {
+      return room.pricePerDay || room.pricePerNight;
+    } else if (bookingType === "both") {
+      return (room.pricePerDay || 0) + (room.pricePerNight || 0);
+    } else {
+      return room.pricePerNight;
+    }
+  };
+
+  const getUnitLabel = () => {
+    if (bookingType === "day") return "ngày";
+    if (bookingType === "both") return "ngày & đêm";
+    return "đêm";
+  };
+
+  const pricePerUnit = getPricePerUnit();
+  const totalPrice = pricePerUnit * nights;
 
   return (
     <div className={cx("room-details")}>
@@ -237,6 +266,38 @@ function RoomDetails() {
           {/* Right Column - Booking Card */}
           <div className={cx("right-column")}>
             <div className={cx("booking-card")}>
+              {/* Booking Type Selection */}
+              {room.bookingTypes && room.bookingTypes.length > 0 && (
+                <div className={cx("booking-type-section")}>
+                  <h4>Chọn loại đặt phòng</h4>
+                  <div className={cx("booking-type-options")}>
+                    {room.bookingTypes.map((type) => (
+                      <label
+                        key={type}
+                        className={cx("booking-type-option", {
+                          active: bookingType === type,
+                        })}
+                      >
+                        <input
+                          type="radio"
+                          name="bookingType"
+                          value={type}
+                          checked={bookingType === type}
+                          onChange={(e) => setBookingType(e.target.value)}
+                        />
+                        <span className={cx("booking-type-label")}>
+                          {type === "night"
+                            ? "Đặt theo đêm"
+                            : type === "day"
+                            ? "Đặt theo ngày"
+                            : "Cả ngày & đêm"}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className={cx("price-section")}>
                 <div className={cx("price")}>
                   <span className={cx("amount")}>
@@ -244,9 +305,21 @@ function RoomDetails() {
                       style: "currency",
                       currency: "VND",
                       currencyDisplay: "code",
-                    }).format(room.pricePerNight)}
+                    }).format(
+                      bookingType === "day"
+                        ? room.pricePerDay || room.pricePerNight
+                        : bookingType === "both"
+                        ? room.pricePerDay + room.pricePerNight
+                        : room.pricePerNight
+                    )}
                   </span>
-                  <span className={cx("per-night")}>/ đêm</span>
+                  <span className={cx("per-night")}>
+                    {bookingType === "day"
+                      ? "/ ngày"
+                      : bookingType === "both"
+                      ? "/ (ngày + đêm)"
+                      : "/ đêm"}
+                  </span>
                 </div>
               </div>
 
@@ -260,12 +333,26 @@ function RoomDetails() {
                       type="date"
                       value={bookingDates.checkIn}
                       min={new Date().toISOString().split("T")[0]}
-                      onChange={(e) =>
-                        setBookingDates((prev) => ({
-                          ...prev,
-                          checkIn: e.target.value,
-                        }))
-                      }
+                      onChange={(e) => {
+                        const newCheckIn = e.target.value;
+                        const checkInDate = new Date(newCheckIn);
+                        const checkOutDate = new Date(bookingDates.checkOut);
+
+                        // Nếu checkout <= checkin, tự động set checkout = checkin + 1 ngày
+                        if (checkOutDate <= checkInDate) {
+                          const nextDay = new Date(checkInDate);
+                          nextDay.setDate(nextDay.getDate() + 1);
+                          setBookingDates({
+                            checkIn: newCheckIn,
+                            checkOut: nextDay.toISOString().split("T")[0],
+                          });
+                        } else {
+                          setBookingDates((prev) => ({
+                            ...prev,
+                            checkIn: newCheckIn,
+                          }));
+                        }
+                      }}
                     />
                   </div>
                   <div className={cx("date-input-group")}>
@@ -273,7 +360,11 @@ function RoomDetails() {
                     <input
                       type="date"
                       value={bookingDates.checkOut}
-                      min={bookingDates.checkIn}
+                      min={(() => {
+                        const minDate = new Date(bookingDates.checkIn);
+                        minDate.setDate(minDate.getDate() + 1);
+                        return minDate.toISOString().split("T")[0];
+                      })()}
                       onChange={(e) =>
                         setBookingDates((prev) => ({
                           ...prev,
@@ -285,6 +376,103 @@ function RoomDetails() {
                 </div>
               </div>
 
+              {/* Guest Selection */}
+              <div className={cx("guest-selection")}>
+                <h4>Số người</h4>
+                <div className={cx("guest-inputs")}>
+                  <div className={cx("guest-input-group")}>
+                    <label>
+                      <FontAwesomeIcon
+                        icon={faUsers}
+                        className={cx("guest-icon")}
+                      />
+                      Người lớn
+                    </label>
+                    <div className={cx("guest-controls")}>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGuests((prev) => ({
+                            ...prev,
+                            adults: Math.max(1, prev.adults - 1),
+                          }))
+                        }
+                        disabled={guests.adults <= 1}
+                        className={cx("guest-btn")}
+                      >
+                        -
+                      </button>
+                      <span className={cx("guest-count")}>{guests.adults}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGuests((prev) => ({
+                            ...prev,
+                            adults: Math.min(
+                              room?.maxAdults || 10,
+                              prev.adults + 1
+                            ),
+                          }))
+                        }
+                        disabled={guests.adults >= (room?.maxAdults || 10)}
+                        className={cx("guest-btn")}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className={cx("guest-input-group")}>
+                    <label>
+                      <FontAwesomeIcon
+                        icon={faUsers}
+                        className={cx("guest-icon")}
+                      />
+                      Trẻ em
+                    </label>
+                    <div className={cx("guest-controls")}>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGuests((prev) => ({
+                            ...prev,
+                            children: Math.max(0, prev.children - 1),
+                          }))
+                        }
+                        disabled={guests.children <= 0}
+                        className={cx("guest-btn")}
+                      >
+                        -
+                      </button>
+                      <span className={cx("guest-count")}>
+                        {guests.children}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGuests((prev) => ({
+                            ...prev,
+                            children: Math.min(
+                              room?.maxChildren || 5,
+                              prev.children + 1
+                            ),
+                          }))
+                        }
+                        disabled={guests.children >= (room?.maxChildren || 5)}
+                        className={cx("guest-btn")}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                {room && (
+                  <p className={cx("guest-capacity-info")}>
+                    Sức chứa tối đa: {room.maxAdults} người lớn,{" "}
+                    {room.maxChildren} trẻ em
+                  </p>
+                )}
+              </div>
+
               {/* Price Breakdown */}
               <div className={cx("price-breakdown")}>
                 <div className={cx("breakdown-row")}>
@@ -293,9 +481,8 @@ function RoomDetails() {
                       style: "currency",
                       currency: "VND",
                       currencyDisplay: "code",
-                    }).format(room.pricePerNight)}{" "}
-                    x {nights}
-                    {" đêm"}
+                    }).format(pricePerUnit)}{" "}
+                    x {nights} {getUnitLabel()}
                   </span>
                   <span>
                     {new Intl.NumberFormat("vi-VN", {

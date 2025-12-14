@@ -34,7 +34,7 @@ function BookingResult() {
   }, [searchParams]);
 
   const handleGoHome = () => {
-    navigate("/");
+    navigate("/hotels");
   };
 
   const handleViewBookings = () => {

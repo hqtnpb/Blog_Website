@@ -34,7 +34,6 @@ const sendEmail = async (to, subject, html) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent successfully:", info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("❌ Error sending email:", error);
@@ -133,7 +132,6 @@ const testEmailConnection = async () => {
   try {
     const transporter = createTransporter();
     await transporter.verify();
-    console.log("✅ Email server is ready to send emails");
     return true;
   } catch (error) {
     console.error("❌ Email server connection failed:", error.message);

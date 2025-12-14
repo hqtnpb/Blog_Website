@@ -3,16 +3,22 @@
   display: flex;
   flex-direction: column;
   background: white;
-  height: 100vh;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   position: sticky;
-  top: 0;
+  top: 100px;
+
+  @media (max-width: 1200px) {
+    position: static;
+    width: 100%;
+  }
 
   .show-on-map {
     padding: 16px;
 
     .map-placeholder {
-      width: 264px;
-      height: 197px;
+      width: 100%;
+      height: 180px;
       background: linear-gradient(180deg, #fff9e5 0%, #ffffff 100%);
       border-radius: 12px;
       border: 1px solid #ffeeb7;
@@ -91,26 +97,9 @@
   }
 
   .filter-content {
-    overflow-y: auto;
+    overflow-y: visible;
     flex: 1;
     padding: 0 16px 24px;
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #dddfe3;
-      border-radius: 3px;
-
-      &:hover {
-        background: #8b94a4;
-      }
-    }
   }
 
   .divider {
@@ -241,7 +230,7 @@
           background: white;
           border: 1px solid #ffeeb7;
           border-radius: 8px;
-
+          font-size: 1.2rem;
           svg {
             flex-shrink: 0;
           }
@@ -317,11 +306,12 @@
     gap: 12px;
     padding: 10px 0;
     cursor: pointer;
+    user-select: none;
 
     .checkbox {
       width: 20px;
       height: 20px;
-      border: 1.5px solid #ffeeb7;
+      border: 2px solid #dddfe3;
       border-radius: 4px;
       display: flex;
       align-items: center;
@@ -337,21 +327,19 @@
 
     &:hover .checkbox:not(.checked) {
       border-color: #ff5b26;
+      background: rgba(255, 91, 38, 0.05);
     }
 
     .checkbox-label {
       font-family: "Roboto", sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 400;
-      color: #191b1d;
+      color: #383e48;
     }
 
     &.star-item {
-      .checkbox {
-        visibility: hidden;
-        width: 0;
-        margin: 0;
-      }
+      align-items: flex-start;
+      padding: 12px 0;
     }
   }
 
@@ -434,28 +422,28 @@
   }
 
   .chip {
-    padding: 10px 16px;
+    padding: 8px 14px;
     background: white;
-    border: 1px solid #ffeeb7;
-    border-radius: 8px;
+    border: 1.5px solid #dddfe3;
+    border-radius: 24px;
     font-family: "Roboto", sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: #191b1d;
+    color: #383e48;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
+    user-select: none;
 
     &:hover:not(.active) {
       border-color: #ff5b26;
-      background: #fff9e5;
+      background: #fff9f9;
     }
 
     &.active {
       border: 1.5px solid #ff5b26;
-      background: #fff9e5;
+      background: #fff4f0;
       color: #ff5b26;
-      padding: 9.5px 15.5px;
     }
   }
 
