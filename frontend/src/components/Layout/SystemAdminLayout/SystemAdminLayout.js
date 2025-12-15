@@ -93,7 +93,8 @@ function SystemAdminLayout({ children }) {
   const handleLogout = () => {
     sessionStorage.clear();
     toast.success("Logged out successfully");
-    navigate("/signin");
+    // Force redirect to login with page reload
+    window.location.href = "/signin";
   };
 
   const isActivePath = (path) => {
