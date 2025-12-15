@@ -224,7 +224,7 @@ export default function BookingCard({
               className={cx("check-out-date")}
               data-node-id="I4908:89460;665:24771"
             >
-              {`${format(date[0].endDate, "dd/MM/yyyy")}`}
+              {`${format(date[0].endDate, "yy/MM/dd")}`}
             </p>
           </div>
         </div>

@@ -42,13 +42,13 @@ const paymentController = {
       const secretKey =
         process.env.MOMO_SECRET_KEY || "K951B6PE1waDMi640xX08PD3vg6EkVlz";
       const redirectUrl =
-        "https://path-way.onrender.com/api/payment/momo/redirect";
+        "https://path-way.onrender.com/api/payment/momo";
       // process.env.MOMO_REDIRECT_URL ||
       // `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}`;
       const ipnUrl =
         process.env.MOMO_IPN_URL ||
         `${process.env.BACKEND_URL || "http://localhost:8000"}/api/payment/momo/callback`;
-      const requestType = "payWithMethod";
+      const requestType = "payWithMethod";  
 
       // Generate unique IDs
       const orderId = `${bookingId}_${Date.now()}`;
