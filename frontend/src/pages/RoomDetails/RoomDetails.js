@@ -39,7 +39,9 @@ function RoomDetails() {
     adults: 2,
     children: 0,
   });
-  const [bookingType, setBookingType] = useState("night"); // "night", "day", or "both"
+  const [bookingType, setBookingType] = useState("night");
+  const [availabilityChecking, setAvailabilityChecking] = useState(false);
+  const [availabilityWarning, setAvailabilityWarning] = useState(null);
 
   const apiUrl =
     process.env.REACT_APP_SERVER_DOMAIN || "http://localhost:8000/api";
@@ -48,6 +50,16 @@ function RoomDetails() {
     fetchRoomDetails();
     // eslint-disable-next-line
   }, [hotel_id, room_id]);
+
+  // Check availability when dates change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      checkAvailability();
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line
+  }, [bookingDates.checkIn, bookingDates.checkOut, room_id]);
 
   const fetchRoomDetails = async () => {
     try {
@@ -81,6 +93,32 @@ function RoomDetails() {
       navigate(`/hotels/${hotel_id}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Check room availability when dates change
+  const checkAvailability = async () => {
+    if (!room_id || !bookingDates.checkIn || !bookingDates.checkOut) return;
+
+    try {
+      setAvailabilityChecking(true);
+      setAvailabilityWarning(null);
+
+      const response = await axios.get(
+        `${apiUrl}/booking/check/availability?roomId=${room_id}&startDate=${bookingDates.checkIn}&endDate=${bookingDates.checkOut}`
+      );
+
+      if (!response.data.available) {
+        setAvailabilityWarning(
+          "⚠️ Phòng này không khả dụng cho ngày đã chọn. Vui lòng chọn ngày khác."
+        );
+      } else {
+        setAvailabilityWarning(null);
+      }
+    } catch (error) {
+      console.error("Error checking availability:", error);
+    } finally {
+      setAvailabilityChecking(false);
     }
   };
 
@@ -330,9 +368,11 @@ function RoomDetails() {
                   <div className={cx("date-input-group")}>
                     <label>Nhận phòng</label>
                     <input
+                      lang="en-CA"
                       type="date"
                       value={bookingDates.checkIn}
                       min={new Date().toISOString().split("T")[0]}
+                      data-date-format="yyyy-mm-dd"
                       onChange={(e) => {
                         const newCheckIn = e.target.value;
                         const checkInDate = new Date(newCheckIn);
@@ -358,6 +398,7 @@ function RoomDetails() {
                   <div className={cx("date-input-group")}>
                     <label>Trả phòng</label>
                     <input
+                      lang="en-CA"
                       type="date"
                       value={bookingDates.checkOut}
                       min={(() => {
@@ -365,6 +406,7 @@ function RoomDetails() {
                         minDate.setDate(minDate.getDate() + 1);
                         return minDate.toISOString().split("T")[0];
                       })()}
+                      date-format="yyyy-mm-dd"
                       onChange={(e) =>
                         setBookingDates((prev) => ({
                           ...prev,
@@ -504,9 +546,28 @@ function RoomDetails() {
                 </div>
               </div>
 
+              {/* Availability Warning */}
+              {availabilityWarning && (
+                <div className={cx("availability-warning")}>
+                  <FontAwesomeIcon icon={faTimesCircle} />
+                  <span>{availabilityWarning}</span>
+                </div>
+              )}
+
               {/* Reserve Button */}
-              <button className={cx("reserve-btn")} onClick={handleReserveRoom}>
-                Đặt phòng này
+              <button
+                className={cx("reserve-btn")}
+                onClick={handleReserveRoom}
+                disabled={!!availabilityWarning || availabilityChecking}
+              >
+                {availabilityChecking ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} spin />
+                    <span> Đang kiểm tra...</span>
+                  </>
+                ) : (
+                  "Đặt phòng này"
+                )}
               </button>
 
               <p className={cx("note")}>Bạn sẽ chưa bị tính phí</p>

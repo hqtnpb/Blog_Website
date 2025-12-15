@@ -467,6 +467,26 @@
         }
       }
 
+      .availability-warning {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 14px;
+        font-weight: 500;
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+
+        svg {
+          color: #856404;
+          font-size: 18px;
+          flex-shrink: 0;
+        }
+      }
+
       .reserve-btn {
         width: 100%;
         padding: 14px;
@@ -479,13 +499,19 @@
         cursor: pointer;
         transition: all 0.3s;
 
-        &:hover {
+        &:hover:not(:disabled) {
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(255, 91, 38, 0.3);
         }
 
-        &:active {
+        &:active:not(:disabled) {
           transform: translateY(0);
+        }
+
+        &:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+          opacity: 0.6;
         }
       }
 
