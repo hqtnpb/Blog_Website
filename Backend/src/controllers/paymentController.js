@@ -42,7 +42,7 @@ const paymentController = {
       const secretKey =
         process.env.MOMO_SECRET_KEY || "K951B6PE1waDMi640xX08PD3vg6EkVlz";
       const redirectUrl =
-        "https://path-way.onrender.com/api/payment/momo";
+        "https://path-way.onrender.com/api/payment/momo/callback";
       // process.env.MOMO_REDIRECT_URL ||
       // `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}`;
       const ipnUrl =
