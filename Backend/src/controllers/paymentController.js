@@ -42,13 +42,12 @@ const paymentController = {
       const secretKey =
         process.env.MOMO_SECRET_KEY || "K951B6PE1waDMi640xX08PD3vg6EkVlz";
       const redirectUrl =
-        "https://path-way.onrender.com/api/payment/momo/callback";
-      // process.env.MOMO_REDIRECT_URL ||
-      // `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}`;
+        process.env.MOMO_REDIRECT_URL ||
+        `${process.env.FRONTEND_URL || "https://path-way-web.vercel.app"}/payment/${bookingId}`;
       const ipnUrl =
         process.env.MOMO_IPN_URL ||
-        `${process.env.BACKEND_URL || "http://localhost:8000"}/api/payment/momo/callback`;
-      const requestType = "payWithMethod";  
+        `${process.env.BACKEND_URL || "https://path-way.onrender.com"}/api/payment/momo/callback`;
+      const requestType = "payWithMethod";
 
       // Generate unique IDs
       const orderId = `${bookingId}_${Date.now()}`;
@@ -325,7 +324,7 @@ const paymentController = {
         ipAddr,
         returnUrl:
           process.env.VNPAY_RETURN_URL ||
-          `${process.env.BACKEND_URL || "http://localhost:8000"}/api/payment/vnpay/callback`,
+          `${process.env.BACKEND_URL || "https://path-way.onrender.com"}/api/payment/vnpay/callback`,
       });
 
       // Update booking with payment info
@@ -476,7 +475,7 @@ const paymentController = {
         }
 
         return res.redirect(
-          `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}?resultCode=0&message=success`
+          `${process.env.FRONTEND_URL || "https://path-way-web.vercel.app"}/payment/${bookingId}?resultCode=0&message=success`
         );
       } else {
         // Payment failed
@@ -486,7 +485,7 @@ const paymentController = {
         const errorMessage = parseVNPayResponseCode(vnp_ResponseCode);
 
         return res.redirect(
-          `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/${bookingId}?resultCode=1&message=${encodeURIComponent(errorMessage)}`
+          `${process.env.FRONTEND_URL || "https://path-way-web.vercel.app"}/payment/${bookingId}?resultCode=1&message=${encodeURIComponent(errorMessage)}`
         );
       }
     } catch (error) {
