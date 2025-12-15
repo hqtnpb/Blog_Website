@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: hotel-booking-api
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: AWS_ACCESS_KEY
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false

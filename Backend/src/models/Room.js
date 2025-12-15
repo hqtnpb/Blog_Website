@@ -79,4 +79,10 @@ const roomSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Add indexes for better query performance
+roomSchema.index({ hotel: 1 });
+roomSchema.index({ pricePerNight: 1 });
+roomSchema.index({ hotel: 1, pricePerNight: 1 });
+roomSchema.index({ hotel: 1, roomType: 1 });
+
 module.exports = mongoose.model("Room", roomSchema);

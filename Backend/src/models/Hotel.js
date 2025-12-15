@@ -148,4 +148,11 @@ const hotelSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Add indexes for better query performance
+hotelSchema.index({ city: 1 });
+hotelSchema.index({ rating: -1 });
+hotelSchema.index({ partner: 1 });
+hotelSchema.index({ city: 1, rating: -1 });
+hotelSchema.index({ name: "text", city: "text", address: "text" });
+
 module.exports = mongoose.model("Hotel", hotelSchema);

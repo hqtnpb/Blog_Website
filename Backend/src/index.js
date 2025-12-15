@@ -47,9 +47,31 @@ const connectDB = async () => {
 
 connectDB();
 
-app.use(cors());
+// Compression middleware for response optimization
+const compression = require("compression");
+app.use(compression());
+
+// CORS with specific configuration
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
+
 app.use(cookieParser());
 app.use(express.json());
+
+// Health check endpoint (important for Render)
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+  });
+});
 
 // Routes
 app.use("/api/auth", authRoute);

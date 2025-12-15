@@ -1,0 +1,18 @@
+.lazy-image {
+  transition: opacity 0.3s ease-in-out;
+
+  &.loading {
+    opacity: 0.6;
+    filter: blur(5px);
+  }
+
+  &.loaded {
+    opacity: 1;
+    filter: none;
+  }
+
+  &.error {
+    opacity: 0.5;
+    filter: grayscale(100%);
+  }
+}
