@@ -31,9 +31,8 @@ function ProfileDropdown({ isOpen, onClose, user }) {
     sessionStorage.clear();
     localStorage.clear();
 
-    // Redirect to login
-    navigate("/signin");
-    onClose();
+    // Force redirect to login with page reload
+    window.location.href = "/signin";
   };
 
   if (!isOpen) return null;
