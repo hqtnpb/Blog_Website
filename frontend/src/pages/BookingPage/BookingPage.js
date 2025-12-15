@@ -302,7 +302,7 @@ function BookingPage() {
 
       console.log("✅ Booking response:", response.data);
 
-      toast.success("Đặt phòng thành công!");
+      // toast.success("Đặt phòng thành công!"); // Removed: Backend sends socket notification
 
       // Backend returns { success, message, booking: {...} }
       const bookingId = response.data.booking?._id || response.data._id;

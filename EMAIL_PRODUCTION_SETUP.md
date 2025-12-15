@@ -1,6 +1,7 @@
 # 📧 Email Configuration for Production (Render)
 
 ## ⚠️ VẤN ĐỀ
+
 Email notifications không hoạt động trên production vì thiếu environment variables trên Render.
 
 ---
@@ -8,6 +9,7 @@ Email notifications không hoạt động trên production vì thiếu environme
 ## 🔧 GIẢI PHÁP - Thêm Environment Variables trên Render
 
 ### Bước 1: Vào Render Dashboard
+
 1. Truy cập: https://dashboard.render.com
 2. Chọn backend service của bạn
 3. Vào tab **Environment**
@@ -45,7 +47,9 @@ AWS_REGION=ap-southeast-2
 ```
 
 ### Bước 4: Save và Redeploy
+
 Sau khi thêm tất cả variables:
+
 1. Click **Save Changes**
 2. Render sẽ tự động redeploy (2-3 phút)
 
@@ -54,17 +58,20 @@ Sau khi thêm tất cả variables:
 ## ✅ VERIFY Email Works
 
 ### Test 1: Send Test Email
+
 ```bash
 # SSH vào Render hoặc test local
 node src/testEmail.js
 ```
 
 ### Test 2: Trigger Email từ App
+
 1. Tạo booking mới trên production
 2. Kiểm tra email inbox
 3. Xem Render logs: `Settings > Logs`
 
 ### Test 3: Check Logs
+
 ```bash
 # Trong Render Logs, tìm:
 ✅ "Email sent successfully"
@@ -77,9 +84,11 @@ hoặc
 ## 🐛 TROUBLESHOOTING
 
 ### Issue 1: "Invalid login" error
+
 **Nguyên nhân**: Gmail App Password không đúng hoặc hết hạn
 
 **Giải pháp**:
+
 1. Vào Google Account: https://myaccount.google.com/
 2. Security → 2-Step Verification
 3. Tạo App Password mới cho "Mail"
@@ -87,9 +96,11 @@ hoặc
 5. Update `EMAIL_PASSWORD` trên Render
 
 ### Issue 2: "Connection timeout"
+
 **Nguyên nhân**: Port 587 bị block
 
 **Giải pháp**:
+
 ```bash
 # Thử đổi sang port 465 (SSL)
 EMAIL_PORT=465
@@ -97,16 +108,20 @@ EMAIL_PORT=465
 ```
 
 ### Issue 3: Email vào Spam
+
 **Nguyên nhân**: Email từ domain không verified
 
 **Giải pháp**:
+
 - Dùng custom domain với SPF/DKIM records
 - Hoặc dùng email service như SendGrid, Mailgun
 
 ### Issue 4: Rate limit exceeded
+
 **Nguyên nhân**: Gmail giới hạn 500 emails/day
 
 **Giải pháp**:
+
 - Nâng cấp lên G Suite (2000 emails/day)
 - Hoặc dùng email service chuyên nghiệp
 
@@ -115,11 +130,13 @@ EMAIL_PORT=465
 ## 🔐 BẢO MẬT
 
 ### ⚠️ KHÔNG BAO GIỜ:
+
 - ❌ Commit `.env` file vào Git
 - ❌ Share email password công khai
 - ❌ Hardcode credentials trong code
 
 ### ✅ NÊN:
+
 - ✅ Dùng environment variables
 - ✅ Dùng Gmail App Password (không phải password chính)
 - ✅ Enable 2FA cho email account
@@ -130,6 +147,7 @@ EMAIL_PORT=465
 ## 📋 CHECKLIST
 
 ### Render Environment Variables:
+
 - [ ] `EMAIL_HOST` = smtp.gmail.com
 - [ ] `EMAIL_PORT` = 587
 - [ ] `EMAIL_USER` = your-email@gmail.com
@@ -139,11 +157,13 @@ EMAIL_PORT=465
 - [ ] `BACKEND_URL` = https://path-way.onrender.com
 
 ### Gmail Setup:
+
 - [ ] 2-Step Verification enabled
 - [ ] App Password created
 - [ ] "Less secure apps" setting (if needed)
 
 ### Testing:
+
 - [ ] Test email sends successfully
 - [ ] Check email arrives in inbox (not spam)
 - [ ] Verify booking confirmation emails
@@ -157,8 +177,11 @@ EMAIL_PORT=465
 Nếu Gmail không ổn định, dùng SendGrid:
 
 ### 1. Sign up: https://sendgrid.com/
+
 ### 2. Create API Key
+
 ### 3. Update Environment Variables:
+
 ```bash
 EMAIL_HOST=smtp.sendgrid.net
 EMAIL_PORT=587
@@ -168,6 +191,7 @@ EMAIL_FROM=noreply@yourdomain.com
 ```
 
 ### Benefits:
+
 - ✅ 100 emails/day free
 - ✅ Better deliverability
 - ✅ Email analytics

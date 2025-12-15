@@ -115,7 +115,7 @@ function PaymentPage() {
       }
 
       setPaymentStatus("success");
-      toast.success("Thanh toán thành công!");
+      // toast.success("Thanh toán thành công!"); // Removed: Backend sends socket notification
       await fetchBooking();
     } else {
       // Update failed status
@@ -138,7 +138,7 @@ function PaymentPage() {
       }
 
       setPaymentStatus("failed");
-      toast.error("Thanh toán thất bại. Vui lòng thử lại.");
+      // toast.error("Thanh toán thất bại. Vui lòng thử lại."); // Removed: Backend sends socket notification
       await fetchBooking();
     }
   };
@@ -227,7 +227,7 @@ function PaymentPage() {
         config
       );
 
-      toast.success("Đặt phòng thành công! Vui lòng thanh toán tại khách sạn.");
+      // toast.success("Đặt phòng thành công! Vui lòng thanh toán tại khách sạn."); // Removed: Backend sends socket notification
       setPaymentStatus("success");
       await fetchBooking();
     } catch (error) {

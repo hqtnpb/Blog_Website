@@ -1,6 +1,7 @@
 # ⚡ Quick Fix - Email Not Working on Production
 
 ## 🎯 TÓM TẮT VẤN ĐỀ
+
 Email notifications không hoạt động trên Render production vì thiếu environment variables.
 
 ---
@@ -8,6 +9,7 @@ Email notifications không hoạt động trên Render production vì thiếu en
 ## ✅ GIẢI PHÁP NHANH (5 phút)
 
 ### 1️⃣ Vào Render Dashboard
+
 ```
 https://dashboard.render.com → Your Backend Service → Environment
 ```
@@ -30,6 +32,7 @@ BACKEND_URL=https://path-way.onrender.com
 ```
 
 ### 4️⃣ Save & Wait for Redeploy
+
 - Render will auto-redeploy (2-3 minutes)
 - Check logs for "Email sent successfully"
 
@@ -43,6 +46,7 @@ node scripts/verifyEmailConfig.js
 ```
 
 **Expected Output:**
+
 ```
 ✅ All email environment variables are configured!
 ✅ SMTP connection successful!
@@ -54,7 +58,7 @@ node scripts/verifyEmailConfig.js
 ## 📋 CHECKLIST
 
 - [ ] Added `EMAIL_HOST` to Render
-- [ ] Added `EMAIL_PORT` to Render  
+- [ ] Added `EMAIL_PORT` to Render
 - [ ] Added `EMAIL_USER` to Render
 - [ ] Added `EMAIL_PASSWORD` to Render
 - [ ] Added `EMAIL_FROM` to Render
@@ -67,11 +71,13 @@ node scripts/verifyEmailConfig.js
 ## 🐛 IF STILL NOT WORKING
 
 ### Check Render Logs:
+
 ```
 Render Dashboard → Your Service → Logs
 ```
 
 Look for:
+
 - ❌ `Error sending email`
 - ❌ `Invalid login`
 - ❌ `Connection timeout`
@@ -79,21 +85,25 @@ Look for:
 ### Common Issues:
 
 **1. Invalid Login**
+
 - Gmail password expired
 - Need to create new App Password
 - Go to: https://myaccount.google.com/apppasswords
 
 **2. Connection Timeout**
+
 - Port 587 might be blocked
 - Try port 465 instead
 
 **3. Email Goes to Spam**
+
 - Normal for first emails
 - Check spam folder
 
 ---
 
 ## 📚 Full Documentation
+
 See: `EMAIL_PRODUCTION_SETUP.md` for detailed guide
 
 ---

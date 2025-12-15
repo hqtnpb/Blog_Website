@@ -86,136 +86,17 @@ export const SocketProvider = ({ children }) => {
       // Add to notifications list
       setNotifications((prev) => [notification, ...prev]);
 
-      // Show toast notification
-      const { type, title, message } = notification;
+      // REMOVED: Toast notifications here to avoid duplicates
+      // Toast is shown in the actual action pages (PaymentPage, BookingPage, etc.)
+      // This socket only updates the notification list and badge count
 
-      switch (type) {
-        case "payment_success":
-          toast.success(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 5000,
-              icon: "💳",
-            }
-          );
-          break;
-
-        case "booking_confirmed":
-          toast.success(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 5000,
-              icon: "✅",
-            }
-          );
-          break;
-
-        case "booking_cancelled":
-          toast.error(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 5000,
-              icon: "❌",
-            }
-          );
-          break;
-
-        case "booking_status_changed":
-          toast(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 5000,
-              icon: "📝",
-            }
-          );
-          break;
-
-        case "payment_failed":
-          toast.error(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 5000,
-              icon: "❌",
-            }
-          );
-          break;
-
-        case "review_received":
-        case "review_reply":
-          toast.success(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 5000,
-              icon: "⭐",
-            }
-          );
-          break;
-
-        case "blog_comment":
-          toast(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 5000,
-              icon: "💬",
-            }
-          );
-          break;
-
-        case "blog_like":
-          toast.success(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 4000,
-              icon: "❤️",
-            }
-          );
-          break;
-
-        default:
-          toast(
-            <div>
-              <strong>{title}</strong>
-              <br />
-              {message}
-            </div>,
-            {
-              duration: 4000,
-              icon: "🔔",
-            }
-          );
-      }
+      // Optional: Play sound or show browser notification
+      // if (Notification.permission === "granted") {
+      //   new Notification(notification.title, {
+      //     body: notification.message,
+      //     icon: "/favicon.ico"
+      //   });
+      // }
     });
 
     setSocket(socketInstance);

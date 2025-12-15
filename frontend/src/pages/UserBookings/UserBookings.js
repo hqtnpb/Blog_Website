@@ -89,7 +89,7 @@ function UserBookings() {
 
       await axios.put(`${apiUrl}/booking/${bookingId}/cancel`, {}, config);
 
-      toast.success("Hủy đặt phòng thành công");
+      // toast.success("Hủy đặt phòng thành công"); // Removed: Backend sends socket notification
       fetchBookings(); // Refresh list
     } catch (error) {
       console.error("Error cancelling booking:", error);
